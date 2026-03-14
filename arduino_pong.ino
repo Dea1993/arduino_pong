@@ -42,6 +42,8 @@ int bar_length= 3;
 int p1_score= 0;
 int p2_score= 0;
 
+int need_refresh= 1;
+
 int loop_delay= 220;
 long exec_t2= millis();
 
@@ -59,6 +61,8 @@ void setup() {
 }
 
 void render_matrix() {
+  if (!need_refresh) return;
+  need_refresh= 0;
   // clear
   for (int x=0; x < 12; x++) {
     for (int y=0; y < 8; y++) {
@@ -84,30 +88,27 @@ void render_matrix() {
 void pong_move_p1() {
   if (digitalRead(P1_BTN_UP) == LOW && p1_start > 0) {
     p1_start -= 1;
-    Serial.print("P1 up: ");
-    Serial.println(p1_start);
-   }
+    need_refresh= 1;
+  }
   else if (digitalRead(P1_BTN_BOTTOM) == LOW && p1_start < 5) {
     p1_start += 1;
-    Serial.print("P1 down: ");
-    Serial.println(p1_start);
+    need_refresh= 1;
   }
 }
 
 void pong_move_p2() {
   if (digitalRead(P2_BTN_UP) == LOW && p2_start > 0) {
     p2_start -= 1;
-    Serial.print("P2 up: ");
-    Serial.println(p2_start);
+    need_refresh= 1;
   }
   else if (digitalRead(P2_BTN_BOTTOM) == LOW && p2_start < 5) {
     p2_start += 1;
-    Serial.print("P2 down: ");
-    Serial.println(p2_start);
+    need_refresh= 1;
   }
 }
 
 void move_ball() {
+  need_refresh= 1;
   if (ball_move_x == 0 || ball_move_y == 0) {
     // extract random number between 0 or 1 to select the directions
     if (random(2) == 0) ball_move_x= 1;
