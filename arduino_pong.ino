@@ -8,7 +8,7 @@
 // create LED matrix object
 ArduinoLEDMatrix matrix;
 
-// initial snake frame
+// initial pong frame
 byte frame[8][12] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -38,19 +38,12 @@ int ball_y= ball_reset_y;
 int ball_move_x= 0;
 int ball_move_y= 0;
 
-const uint32_t frame_game_over[] = {
-  0x20410809,
-  0x600600,
-  0x90108204,
-};
-
 int bar_length= 3;
 int p1_score= 0;
 int p2_score= 0;
 
-int loop_delay= 300;
+int loop_delay= 220;
 long exec_t2= millis();
-bool running= true;
 
 void setup() {
   //Serial.begin(115200);
@@ -116,9 +109,6 @@ void pong_move_p2() {
 
 void move_ball() {
   if (ball_move_x == 0 || ball_move_y == 0) {
-    // random balldirection
-    Serial.println("Ball is not moving");
-
     // extract random number between 0 or 1 to select the directions
     if (random(2) == 0) ball_move_x= 1;
     else ball_move_x= -1;
@@ -148,9 +138,6 @@ void move_ball() {
       Serial.print("Player 1 score: ");
       Serial.println(p1_score);
     }
-    else {
-      ball_x += 1;
-    }
   }
   else if (ball_x == 11) {
     int hit= 0;
@@ -173,9 +160,6 @@ void move_ball() {
       Serial.print("Player 1: ");
       Serial.println(p1_score);
     }
-    else {
-      ball_x -= 1;
-    }
   }
 
   else if (ball_y == 0 || ball_y == 7) {
@@ -188,15 +172,12 @@ void move_ball() {
 }
 
 void loop() {
-  if (!running) return;
   long exec_t1= millis();
   pong_move_p1();
   pong_move_p2();
+  render_matrix();
   if (exec_t1 - exec_t2 > loop_delay) {
-    render_matrix();
-
     move_ball();
-
     exec_t2= exec_t1;
   }
   delay(10);
