@@ -127,24 +127,55 @@ void move_ball() {
   }
 
   else if (ball_x == 0) {
-    // p2 score, reset board
-    ball_x= ball_reset_x;
-    ball_y= ball_reset_y;
-    p2_score += 1;
-    Serial.print("Player 2: ");
-    Serial.println(p2_score);
-    Serial.print("Player 1: ");
-    Serial.println(p1_score);
+    // if p1 collision: reverse x, go left
+    int hit= 0;
+    for (int p1= p1_start; p1 < p1_start + bar_length; p1++) {
+      if (ball_y == p1) {
+        ball_move_x= ball_move_x * -1;
+        hit= 1;
+        break;
+      }
+    }
+
+    if (!hit) {
+      // else p2 score, reset board
+      ball_x= ball_reset_x;
+      ball_y= ball_reset_y;
+      p2_score += 1;
+
+      Serial.print("Player 2 score: ");
+      Serial.println(p2_score);
+      Serial.print("Player 1 score: ");
+      Serial.println(p1_score);
+    }
+    else {
+      ball_x += 1;
+    }
   }
   else if (ball_x == 11) {
-    // p1 score, reset board
-    ball_x= ball_reset_x;
-    ball_y= ball_reset_y;
-    p1_score += 1;
-    Serial.print("Player 2: ");
-    Serial.println(p2_score);
-    Serial.print("Player 1: ");
-    Serial.println(p1_score);
+    int hit= 0;
+    for (int p2= p2_start; p2 < p2_start + bar_length; p2++) {
+    // if p2 collision: reverse x, go left
+      if (ball_y == p2) {
+        ball_move_x= ball_move_x * -1;
+        hit= 1;
+        break;
+      }
+    }
+    
+    if (!hit) {
+      // else p1 score, reset board
+      ball_x= ball_reset_x;
+      ball_y= ball_reset_y;
+      p1_score += 1;
+      Serial.print("Player 2: ");
+      Serial.println(p2_score);
+      Serial.print("Player 1: ");
+      Serial.println(p1_score);
+    }
+    else {
+      ball_x -= 1;
+    }
   }
 
   else if (ball_y == 0 || ball_y == 7) {
