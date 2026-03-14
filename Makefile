@@ -11,5 +11,6 @@ monitor:
 	arduino-cli monitor -p /dev/ttyACM0
 
 run:
+	make compile
 	make upload
 	make monitor
