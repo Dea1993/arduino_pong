@@ -131,12 +131,20 @@ void move_ball() {
     ball_x= ball_reset_x;
     ball_y= ball_reset_y;
     p2_score += 1;
+    Serial.print("Player 2: ");
+    Serial.println(p2_score);
+    Serial.print("Player 1: ");
+    Serial.println(p1_score);
   }
   else if (ball_x == 11) {
     // p1 score, reset board
     ball_x= ball_reset_x;
     ball_y= ball_reset_y;
     p1_score += 1;
+    Serial.print("Player 2: ");
+    Serial.println(p2_score);
+    Serial.print("Player 1: ");
+    Serial.println(p1_score);
   }
 
   else if (ball_y == 0 || ball_y == 7) {
