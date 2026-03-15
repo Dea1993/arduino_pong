@@ -44,7 +44,11 @@ int p2_score= 0;
 
 int need_refresh= 1;
 
-int loop_delay= 220;
+int initial_loop_delay= 200;
+int loop_delay= initial_loop_delay;
+// used to increase speed when game is too easy
+int hits= 0;
+
 long exec_t2= millis();
 
 void setup() {
@@ -116,13 +120,18 @@ int ball_player_collision(int player) {
   return 0;
 }
 
-void print_points() {
+void point_scored() {
+  ball_x= ball_reset_x;
+  ball_y= ball_reset_y;
   Serial.print("P1: ");
   Serial.print(p1_score);
   Serial.print(" - ");
   Serial.print("P2: ");
   Serial.print(p2_score);
   Serial.println();
+
+  hits= 0;
+  loop_delay= initial_loop_delay;
 }
 
 void move_ball() {
@@ -148,26 +157,24 @@ void move_ball() {
     // if p1 collision: reverse x, go left
     if (!ball_player_collision(p1_start)) {
       // else p2 score, reset board
-      ball_x= ball_reset_x;
-      ball_y= ball_reset_y;
       p2_score += 1;
       Serial.println("Player 2 Point");
-      print_points();
+      point_scored();
     }
     else {
+      hits += 1;
       ball_move_x= ball_move_x * -1;
     }
   }
   else if (ball_x == 11) {
     if (!ball_player_collision(p2_start)) {
       // else p1 score, reset board
-      ball_x= ball_reset_x;
-      ball_y= ball_reset_y;
       p1_score += 1;
       Serial.println("Player 1 Point");
-      print_points();
+      point_scored();
     }
     else {
+      hits += 1;
       ball_move_x= ball_move_x * -1;
     }
   }
@@ -175,6 +182,12 @@ void move_ball() {
   if (ball_y == 0 || ball_y == 7) {
     // reverse y, go down
     ball_move_y= ball_move_y * -1;
+  }
+
+  if (hits >= 6 && loop_delay >= 80) {
+    // increase ball speed
+    hits = 0;
+    loop_delay -= 20;
   }
 
   ball_x+= ball_move_x;
