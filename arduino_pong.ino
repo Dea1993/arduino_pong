@@ -107,8 +107,35 @@ void pong_move_p2() {
   }
 }
 
+int ball_player_collision(int player) {
+  for (int p= player; p < player + bar_length; p++) {
+    if (ball_y == p) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+void print_points() {
+  Serial.print("P1: ");
+  Serial.print(p1_score);
+  Serial.print(" - ");
+  Serial.print("P2: ");
+  Serial.print(p2_score);
+  Serial.println();
+}
+
 void move_ball() {
   need_refresh= 1;
+  if (ball_x < 0 || ball_x > 11 || ball_y < 0 || ball_y > 7) {
+    // ball out of matrix limits
+    ball_x= ball_reset_x;
+    ball_y= ball_reset_y;
+    return;
+  }
+  
+  // if ball is not moving, get random direction
+  // this is the initial position
   if (ball_move_x == 0 || ball_move_y == 0) {
     // extract random number between 0 or 1 to select the directions
     if (random(2) == 0) ball_move_x= 1;
@@ -119,51 +146,33 @@ void move_ball() {
 
   else if (ball_x == 0) {
     // if p1 collision: reverse x, go left
-    int hit= 0;
-    for (int p1= p1_start; p1 < p1_start + bar_length; p1++) {
-      if (ball_y == p1) {
-        ball_move_x= ball_move_x * -1;
-        hit= 1;
-        break;
-      }
-    }
-
-    if (!hit) {
+    if (!ball_player_collision(p1_start)) {
       // else p2 score, reset board
       ball_x= ball_reset_x;
       ball_y= ball_reset_y;
       p2_score += 1;
-
-      Serial.print("Player 2 score: ");
-      Serial.println(p2_score);
-      Serial.print("Player 1 score: ");
-      Serial.println(p1_score);
+      Serial.println("Player 2 Point");
+      print_points();
+    }
+    else {
+      ball_move_x= ball_move_x * -1;
     }
   }
   else if (ball_x == 11) {
-    int hit= 0;
-    for (int p2= p2_start; p2 < p2_start + bar_length; p2++) {
-    // if p2 collision: reverse x, go left
-      if (ball_y == p2) {
-        ball_move_x= ball_move_x * -1;
-        hit= 1;
-        break;
-      }
-    }
-    
-    if (!hit) {
+    if (!ball_player_collision(p2_start)) {
       // else p1 score, reset board
       ball_x= ball_reset_x;
       ball_y= ball_reset_y;
       p1_score += 1;
-      Serial.print("Player 2: ");
-      Serial.println(p2_score);
-      Serial.print("Player 1: ");
-      Serial.println(p1_score);
+      Serial.println("Player 1 Point");
+      print_points();
+    }
+    else {
+      ball_move_x= ball_move_x * -1;
     }
   }
 
-  else if (ball_y == 0 || ball_y == 7) {
+  if (ball_y == 0 || ball_y == 7) {
     // reverse y, go down
     ball_move_y= ball_move_y * -1;
   }
@@ -181,5 +190,5 @@ void loop() {
     move_ball();
     exec_t2= exec_t1;
   }
-  delay(10);
+  delay(50);
 }
