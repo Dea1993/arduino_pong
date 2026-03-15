@@ -1,14 +1,18 @@
+PORT ?= /dev/ttyACM0
+BOARD = arduino:renesas_uno:unor4wifi
+SKETCH = arduino_pong.ino
+
 compile:
-	arduino-cli compile -b arduino:renesas_uno:unor4wifi ./arduino_pong.ino
+	arduino-cli compile -b $(BOARD) $(SKETCH)
 
 upload:
-	arduino-cli upload -b arduino:renesas_uno:unor4wifi -p /dev/ttyACM0
+	arduino-cli upload -b $(BOARD) -p $(PORT)
 
 upload_verbose:
-	arduino-cli upload -b arduino:renesas_uno:unor4wifi -p /dev/ttyACM0 -v
+	arduino-cli upload -b $(BOARD) -p $(PORT) -v
 
 monitor:
-	arduino-cli monitor -p /dev/ttyACM0
+	arduino-cli monitor -p $(PORT)
 
 run:
 	make compile
