@@ -57,9 +57,11 @@ This project includes a `Makefile` to automate the workflow using `arduino-cli`.
 ### Commands
 | Command | Description |
 | :--- | :--- |
+| `make prepare` | Downloads arduino-cli locally and installs the UNO R4 core. |
 | `make compile` | Compiles the sketch without uploading. |
 | `make upload` | Uploads the compiled binary to `/dev/ttyACM0`. |
 | `make monitor` | Opens the Serial Monitor. |
 | `make run` | Full cycle: Compile + Upload + Monitor. |
+| `make run_init` | Full first-time setup: Prepare env + Compile + Upload + Monitor. |
 
 > **Note:** If your board is on a different port, edit the `Makefile` or override it: `make upload PORT=/dev/ttyUSB0`.

@@ -1,1 +1,3 @@
 .secrets
+.arduino_cache/
+bin/
