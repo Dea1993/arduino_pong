@@ -6,10 +6,10 @@
   #warning "⚠️ secrets.h not found"
 #endif
 
-#define P1_BTN_UP 13
-#define P1_BTN_BOTTOM 12
-#define P2_BTN_UP 11
-#define P2_BTN_BOTTOM 10
+#define P1_BTN_UP 12
+#define P1_BTN_BOTTOM 11
+#define P2_BTN_UP 10
+#define P2_BTN_BOTTOM 9
 
 #define MATRIX_WIDTH 12
 #define MATRIX_HEIGHT 8
