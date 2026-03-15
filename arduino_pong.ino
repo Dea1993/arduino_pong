@@ -4,6 +4,7 @@
 #include "src/pong_render.h"
 #include "src/pong_player.h"
 #include "src/pong_ball.h"
+#include "src/arduino_network.h"
 
 // create LED matrix object
 ArduinoLEDMatrix matrix;
@@ -45,6 +46,8 @@ void setup() {
   pinMode(P2_BTN_BOTTOM, INPUT_PULLUP);
 
   randomSeed(millis());
+
+  setup_network();
 }
 
 void loop() {
@@ -61,4 +64,6 @@ void loop() {
     need_refresh= 0;
   }
   delay(50);
+
+  web_server();
 }

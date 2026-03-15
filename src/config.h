@@ -1,3 +1,11 @@
+#if __has_include("secrets.h")
+  #include "secrets.h"
+#else
+  #define SECRET_SSID "Fallback_SSID"
+  #define SECRET_PASS "Fallback_PASS"
+  #warning "⚠️ secrets.h not found"
+#endif
+
 #define P1_BTN_UP 13
 #define P1_BTN_BOTTOM 12
 #define P2_BTN_UP 11

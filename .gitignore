@@ -1,4 +1,4 @@
-.secrets
 .arduino_cache/
 bin/
 build/
+src/secrets.h
