@@ -8,7 +8,7 @@ A classic implementation of the Pong game developed specifically for the Arduino
 
 # 📹 Preview
 
-![Pong](preview.png)
+![Pong](assets/preview.png)
 
 Youtube: https://youtu.be/ouLBTDjpKqc
 

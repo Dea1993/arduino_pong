@@ -1,9 +1,7 @@
 #include <Arduino.h>
 #include "config.h"
 
-void render_matrix(byte frame[MATRIX_HEIGHT][MATRIX_WIDTH], int p1_start, int p2_start, int &need_refresh, int ball_x, int ball_y) {
-  if (!need_refresh) return;
-  need_refresh= 0;
+void render_matrix(byte frame[MATRIX_HEIGHT][MATRIX_WIDTH], int p1_start, int p2_start, int ball_x, int ball_y) {
   // clear
   for (int x=0; x < MATRIX_WIDTH; x++) {
     for (int y=0; y < MATRIX_HEIGHT; y++) {

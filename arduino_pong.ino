@@ -30,7 +30,7 @@ int ball_y= BALL_RESET_Y;
 
 int need_refresh= 1;
 
-int loop_delay= INITIAL_LOOP_DELAY;
+int ball_delay= INITIAL_BALL_DELAY;
 
 long exec_t2= millis();
 
@@ -51,11 +51,14 @@ void loop() {
   long exec_t1= millis();
   pong_move_p1(p1_start, need_refresh);
   pong_move_p2(p2_start, need_refresh);
-  render_matrix(frame, p1_start, p2_start, need_refresh, ball_x, ball_y);
-  if (exec_t1 - exec_t2 > loop_delay) {
-    move_ball(ball_x, ball_y, loop_delay, p1_start, p2_start, need_refresh);
+  if (exec_t1 - exec_t2 > ball_delay) {
+    move_ball(ball_x, ball_y, ball_delay, p1_start, p2_start, need_refresh);
     exec_t2= exec_t1;
   }
-  matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+  if (need_refresh) {
+    render_matrix(frame, p1_start, p2_start, ball_x, ball_y);
+    matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+    need_refresh= 0;
+  }
   delay(50);
 }

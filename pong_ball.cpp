@@ -13,7 +13,7 @@ int p2_score= 0;
 int ball_move_x= 0;
 int ball_move_y= 0;
 
-void point_scored(int &ball_x, int &ball_y, int &loop_delay) {
+void point_scored(int &ball_x, int &ball_y, int &ball_delay) {
   ball_x= BALL_RESET_X;
   ball_y= BALL_RESET_Y;
   Serial.print("P1: ");
@@ -24,10 +24,10 @@ void point_scored(int &ball_x, int &ball_y, int &loop_delay) {
   Serial.println();
 
   hits= 0;
-  loop_delay= INITIAL_LOOP_DELAY;
+  ball_delay= INITIAL_BALL_DELAY;
 }
 
-void move_ball(int &ball_x, int &ball_y, int &loop_delay, int p1_start, int p2_start, int &need_refresh) {
+void move_ball(int &ball_x, int &ball_y, int &ball_delay, int p1_start, int p2_start, int &need_refresh) {
   need_refresh= 1;
   if (ball_x < 0 || ball_x > MATRIX_WIDTH-1 || ball_y < 0 || ball_y > MATRIX_HEIGHT-1) {
     // ball out of matrix limits
@@ -52,7 +52,7 @@ void move_ball(int &ball_x, int &ball_y, int &loop_delay, int p1_start, int p2_s
       // else p2 score, reset board
       p2_score += 1;
       Serial.println("Player 2 Scores");
-      point_scored(ball_x, ball_y, loop_delay);
+      point_scored(ball_x, ball_y, ball_delay);
     }
     else {
       hits += 1;
@@ -64,7 +64,7 @@ void move_ball(int &ball_x, int &ball_y, int &loop_delay, int p1_start, int p2_s
       // else p1 score, reset board
       p1_score += 1;
       Serial.println("Player 1 Scores");
-      point_scored(ball_x, ball_y, loop_delay);
+      point_scored(ball_x, ball_y, ball_delay);
     }
     else {
       hits += 1;
@@ -77,10 +77,10 @@ void move_ball(int &ball_x, int &ball_y, int &loop_delay, int p1_start, int p2_s
     ball_move_y= ball_move_y * -1;
   }
 
-  if (hits >= 6 && loop_delay >= 80) {
+  if (hits >= 6 && ball_delay >= 80) {
     // increase ball speed
     hits = 0;
-    loop_delay -= 20;
+    ball_delay -= 20;
   }
 
   ball_x+= ball_move_x;
