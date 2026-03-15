@@ -30,8 +30,13 @@ prepare:
 	fi
 
 compile:
+	@mkdir -p build
 	@echo -e "$(GREEN)🛠️  Compiling $(SKETCH)...$(CLEAR)"
-	@$(CLI) compile -b $(BOARD) $(SKETCH)
+	@$(CLI) compile -b $(BOARD) --output-dir build $(SKETCH)
+
+clean:
+	@echo -e "$(GREEN)🛠️  Removing build files...$(CLEAR)"
+	@rm -rf build/
 
 prepare_and_compile:
 	make prepare --no-print-directory

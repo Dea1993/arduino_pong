@@ -32,6 +32,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/arduino.renesas_uno.unor4wifi/arduino_pong.ino.bin
+            build/*.bin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
