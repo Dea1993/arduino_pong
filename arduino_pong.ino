@@ -8,13 +8,13 @@
 // create LED matrix object
 ArduinoLEDMatrix matrix;
 
-// initial pong frame
+// initial pong frame matrix
 byte frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+  { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
@@ -34,17 +34,17 @@ int ball_delay= INITIAL_BALL_DELAY;
 
 long exec_t2= millis();
 
+
 void setup() {
-  //Serial.begin(115200);
   Serial.begin(9600);
-  // stard LED matrix
+  // start LED matrix
   matrix.begin();
   pinMode(P1_BTN_UP, INPUT_PULLUP);
   pinMode(P1_BTN_BOTTOM, INPUT_PULLUP);
   pinMode(P2_BTN_UP, INPUT_PULLUP);
   pinMode(P2_BTN_BOTTOM, INPUT_PULLUP);
 
-  randomSeed(analogRead(0));
+  randomSeed(millis());
 }
 
 void loop() {
