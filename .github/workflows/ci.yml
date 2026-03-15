@@ -6,7 +6,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout Code
@@ -21,4 +25,5 @@ jobs:
           arduino-cli core install arduino:renesas_uno
           
       - name: Compile Sketch (via Makefile)
+        shell: bash
         run: make compile
