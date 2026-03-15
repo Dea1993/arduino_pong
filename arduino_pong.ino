@@ -1,9 +1,9 @@
 #include "Arduino_LED_Matrix.h"
 
-#include "config.h"
-#include "pong_render.h"
-#include "pong_player.h"
-#include "pong_ball.h"
+#include "src/config.h"
+#include "src/pong_render.h"
+#include "src/pong_player.h"
+#include "src/pong_ball.h"
 
 // create LED matrix object
 ArduinoLEDMatrix matrix;
