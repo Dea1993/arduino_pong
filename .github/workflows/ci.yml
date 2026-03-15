@@ -3,6 +3,10 @@ name: Arduino Pong CI
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'arduino_pong.ini'
+      - 'Makefile'
+      - '.github/workflows/ci.yml'
 
 jobs:
   build:
