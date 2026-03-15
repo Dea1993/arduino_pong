@@ -1,0 +1,11 @@
+#define P1_BTN_UP 13
+#define P1_BTN_BOTTOM 12
+#define P2_BTN_UP 11
+#define P2_BTN_BOTTOM 10
+
+#define MATRIX_WIDTH 12
+#define MATRIX_HEIGHT 8
+#define BALL_RESET_X (MATRIX_WIDTH / 2)
+#define BALL_RESET_Y (MATRIX_HEIGHT / 2)
+#define BAR_LENGTH 3
+#define INITIAL_LOOP_DELAY 200

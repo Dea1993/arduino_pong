@@ -1,11 +1,9 @@
 #include "Arduino_LED_Matrix.h"
 
-#define P1_BTN_UP 13
-#define P1_BTN_BOTTOM 12
-#define P2_BTN_UP 11
-#define P2_BTN_BOTTOM 10
-#define MATRIX_WIDTH 12
-#define MATRIX_HEIGHT 8
+#include "config.h"
+#include "pong_render.h"
+#include "pong_player.h"
+#include "pong_ball.h"
 
 // create LED matrix object
 ArduinoLEDMatrix matrix;
@@ -24,32 +22,15 @@ byte frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
 
 // players coordinates
 int p1_start= 1;
-int p1_end= 3;
-
 int p2_start= 4;
-int p2_end= 6;
 
 // initials balls coordinates
-int ball_reset_x= MATRIX_WIDTH / 2;
-int ball_reset_y= MATRIX_HEIGHT / 2;
-int ball_x= ball_reset_x;
-int ball_y= ball_reset_y;
-
-// initially ball has no movements
-// once game/round starts, balls gets random x and y movements
-int ball_move_x= 0;
-int ball_move_y= 0;
-
-int bar_length= 3;
-int p1_score= 0;
-int p2_score= 0;
+int ball_x= BALL_RESET_X;
+int ball_y= BALL_RESET_Y;
 
 int need_refresh= 1;
 
-int initial_loop_delay= 200;
-int loop_delay= initial_loop_delay;
-// used to increase speed when game is too easy
-int hits= 0;
+int loop_delay= INITIAL_LOOP_DELAY;
 
 long exec_t2= millis();
 
@@ -66,143 +47,15 @@ void setup() {
   randomSeed(analogRead(0));
 }
 
-void render_matrix() {
-  if (!need_refresh) return;
-  need_refresh= 0;
-  // clear
-  for (int x=0; x < MATRIX_WIDTH; x++) {
-    for (int y=0; y < MATRIX_HEIGHT; y++) {
-      frame[y][x]= 0;
-    }
-  }
-  
-  // players coords
-  for (int i= p1_start; i < p1_start+bar_length; i++) {
-    frame[i][0]= 1;
-  }
-  for (int i= p2_start; i < p2_start+bar_length; i++) {
-    frame[i][MATRIX_WIDTH-1]= 1;
-  }
-  
-  // ball coords
-  frame[ball_y][ball_x]= 1;
-
-  matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
-}
-
-void pong_move_p1() {
-  if (digitalRead(P1_BTN_UP) == LOW && p1_start > 0) {
-    p1_start -= 1;
-    need_refresh= 1;
-  }
-  else if (digitalRead(P1_BTN_BOTTOM) == LOW && p1_start < 5) {
-    p1_start += 1;
-    need_refresh= 1;
-  }
-}
-
-void pong_move_p2() {
-  if (digitalRead(P2_BTN_UP) == LOW && p2_start > 0) {
-    p2_start -= 1;
-    need_refresh= 1;
-  }
-  else if (digitalRead(P2_BTN_BOTTOM) == LOW && p2_start < 5) {
-    p2_start += 1;
-    need_refresh= 1;
-  }
-}
-
-int ball_player_collision(int player) {
-  for (int p= player; p < player + bar_length; p++) {
-    if (ball_y == p) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-void point_scored() {
-  ball_x= ball_reset_x;
-  ball_y= ball_reset_y;
-  Serial.print("P1: ");
-  Serial.print(p1_score);
-  Serial.print(" - ");
-  Serial.print("P2: ");
-  Serial.print(p2_score);
-  Serial.println();
-
-  hits= 0;
-  loop_delay= initial_loop_delay;
-}
-
-void move_ball() {
-  need_refresh= 1;
-  if (ball_x < 0 || ball_x > MATRIX_WIDTH-1 || ball_y < 0 || ball_y > MATRIX_HEIGHT-1) {
-    // ball out of matrix limits
-    ball_x= ball_reset_x;
-    ball_y= ball_reset_y;
-    return;
-  }
-  
-  // if ball is not moving, get random direction
-  // this is the initial position
-  if (ball_move_x == 0 || ball_move_y == 0) {
-    // extract random number between 0 or 1 to select the directions
-    if (random(2) == 0) ball_move_x= 1;
-    else ball_move_x= -1;
-    if (random(2) == 0) ball_move_y= 1;
-    else ball_move_y= -1;
-  }
-
-  else if (ball_x == 0) {
-    // if p1 collision: reverse x, go left
-    if (!ball_player_collision(p1_start)) {
-      // else p2 score, reset board
-      p2_score += 1;
-      Serial.println("Player 2 Scores");
-      point_scored();
-    }
-    else {
-      hits += 1;
-      ball_move_x= ball_move_x * -1;
-    }
-  }
-  else if (ball_x == MATRIX_WIDTH-1) {
-    if (!ball_player_collision(p2_start)) {
-      // else p1 score, reset board
-      p1_score += 1;
-      Serial.println("Player 1 Scores");
-      point_scored();
-    }
-    else {
-      hits += 1;
-      ball_move_x= ball_move_x * -1;
-    }
-  }
-
-  if (ball_y == 0 || ball_y == MATRIX_HEIGHT-1) {
-    // reverse y, go down
-    ball_move_y= ball_move_y * -1;
-  }
-
-  if (hits >= 6 && loop_delay >= 80) {
-    // increase ball speed
-    hits = 0;
-    loop_delay -= 20;
-  }
-
-  ball_x+= ball_move_x;
-  ball_y+= ball_move_y;
-}
-
 void loop() {
   long exec_t1= millis();
-  pong_move_p1();
-  pong_move_p2();
-  render_matrix();
+  pong_move_p1(p1_start, need_refresh);
+  pong_move_p2(p2_start, need_refresh);
+  render_matrix(frame, p1_start, p2_start, need_refresh, ball_x, ball_y);
   if (exec_t1 - exec_t2 > loop_delay) {
-    move_ball();
+    move_ball(ball_x, ball_y, loop_delay, p1_start, p2_start, need_refresh);
     exec_t2= exec_t1;
   }
+  matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
   delay(50);
 }
