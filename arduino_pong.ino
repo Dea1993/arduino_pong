@@ -71,7 +71,6 @@ void render_matrix() {
   for (int x=0; x < 12; x++) {
     for (int y=0; y < 8; y++) {
       frame[y][x]= 0;
-      frame[y][x]= 0;
     }
   }
   
