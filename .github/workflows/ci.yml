@@ -1,0 +1,24 @@
+name: Arduino Pong CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Install UNO R4 Core
+        run: |
+          arduino-cli core update-index
+          arduino-cli core install arduino:renesas_uno
+          
+      - name: Compile Sketch (via Makefile)
+        run: make compile
