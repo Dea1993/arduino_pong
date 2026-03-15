@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'arduino_pong.ini'
+      - 'arduino_pong.ino'
       - 'Makefile'
       - '.github/workflows/ci.yml'
 
