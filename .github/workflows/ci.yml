@@ -7,6 +7,8 @@ on:
       - 'arduino_pong.ino'
       - 'Makefile'
       - '.github/workflows/ci.yml'
+      - '*.cpp'
+      - '*.h'
 
 jobs:
   build:
