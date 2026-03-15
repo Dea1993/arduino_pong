@@ -2,6 +2,9 @@
 
 A classic implementation of the Pong game developed specifically for the Arduino UNO R4 WiFi, utilizing its built-in 12×8 LED matrix as the game screen.
 
+[![Arduino Pong CI](https://github.com/Dea1993/arduino_pong/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Dea1993/arduino_pong/actions/workflows/ci.yml)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+
 # 📹 Preview
 
 ![Pong](preview.png)
