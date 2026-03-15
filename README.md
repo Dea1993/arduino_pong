@@ -41,3 +41,22 @@ Component	Arduino Pin	Function
 - Bouncing: When the ball hits a paddle, the X direction is reversed and the hits counter increases.
 - Speed Scaling: Every 6 successful hits (hits >= 6), the loop_delay decreases by 20ms, speeding up the action until a minimum limit of 80ms is reached.
 - Scoring: If a player misses the ball, the opponent scores a point. The ball then resets to the center with a randomized direction.
+
+# 🛠️ Development
+
+This project includes a `Makefile` to automate the workflow using `arduino-cli`.
+
+### Prerequisites
+* [Arduino CLI](https://arduino.github.io/arduino-cli/latest/) installed.
+* Arduino UNO R4 core installed: 
+  `arduino-cli core install arduino:renesas_uno`
+
+### Commands
+| Command | Description |
+| :--- | :--- |
+| `make compile` | Compiles the sketch without uploading. |
+| `make upload` | Uploads the compiled binary to `/dev/ttyACM0`. |
+| `make monitor` | Opens the Serial Monitor. |
+| `make run` | Full cycle: Compile + Upload + Monitor. |
+
+> **Note:** If your board is on a different port, edit the `Makefile` or override it: `make upload PORT=/dev/ttyUSB0`.
