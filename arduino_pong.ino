@@ -159,7 +159,7 @@ void move_ball() {
     if (!ball_player_collision(p1_start)) {
       // else p2 score, reset board
       p2_score += 1;
-      Serial.println("Player 2 Point");
+      Serial.println("Player 2 Scores");
       point_scored();
     }
     else {
@@ -171,7 +171,7 @@ void move_ball() {
     if (!ball_player_collision(p2_start)) {
       // else p1 score, reset board
       p1_score += 1;
-      Serial.println("Player 1 Point");
+      Serial.println("Player 1 Scores");
       point_scored();
     }
     else {
