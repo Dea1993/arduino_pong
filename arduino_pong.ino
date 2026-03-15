@@ -4,12 +4,14 @@
 #define P1_BTN_BOTTOM 12
 #define P2_BTN_UP 11
 #define P2_BTN_BOTTOM 10
+#define MATRIX_WIDTH 12
+#define MATRIX_HEIGHT 8
 
 // create LED matrix object
 ArduinoLEDMatrix matrix;
 
 // initial pong frame
-byte frame[8][12] = {
+byte frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -28,8 +30,8 @@ int p2_start= 4;
 int p2_end= 6;
 
 // initials balls coordinates
-int ball_reset_x=6;
-int ball_reset_y=3;
+int ball_reset_x= MATRIX_WIDTH / 2;
+int ball_reset_y= MATRIX_HEIGHT / 2;
 int ball_x= ball_reset_x;
 int ball_y= ball_reset_y;
 
@@ -68,8 +70,8 @@ void render_matrix() {
   if (!need_refresh) return;
   need_refresh= 0;
   // clear
-  for (int x=0; x < 12; x++) {
-    for (int y=0; y < 8; y++) {
+  for (int x=0; x < MATRIX_WIDTH; x++) {
+    for (int y=0; y < MATRIX_HEIGHT; y++) {
       frame[y][x]= 0;
     }
   }
@@ -79,13 +81,13 @@ void render_matrix() {
     frame[i][0]= 1;
   }
   for (int i= p2_start; i < p2_start+bar_length; i++) {
-    frame[i][11]= 1;
+    frame[i][MATRIX_WIDTH-1]= 1;
   }
   
   // ball coords
   frame[ball_y][ball_x]= 1;
 
-  matrix.renderBitmap(frame, 8, 12);
+  matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
 }
 
 void pong_move_p1() {
@@ -135,7 +137,7 @@ void point_scored() {
 
 void move_ball() {
   need_refresh= 1;
-  if (ball_x < 0 || ball_x > 11 || ball_y < 0 || ball_y > 7) {
+  if (ball_x < 0 || ball_x > MATRIX_WIDTH-1 || ball_y < 0 || ball_y > MATRIX_HEIGHT-1) {
     // ball out of matrix limits
     ball_x= ball_reset_x;
     ball_y= ball_reset_y;
@@ -165,7 +167,7 @@ void move_ball() {
       ball_move_x= ball_move_x * -1;
     }
   }
-  else if (ball_x == 11) {
+  else if (ball_x == MATRIX_WIDTH-1) {
     if (!ball_player_collision(p2_start)) {
       // else p1 score, reset board
       p1_score += 1;
@@ -178,7 +180,7 @@ void move_ball() {
     }
   }
 
-  if (ball_y == 0 || ball_y == 7) {
+  if (ball_y == 0 || ball_y == MATRIX_HEIGHT-1) {
     // reverse y, go down
     ball_move_y= ball_move_y * -1;
   }
