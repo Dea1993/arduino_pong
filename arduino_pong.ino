@@ -21,8 +21,8 @@ byte frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
 };
 
 // players coordinates
-int p1_start= 1;
-int p2_start= 4;
+int players_coords[2]= {1, 4};
+int players_scores[2]= {0, 0};
 
 // initials balls coordinates
 int ball_x= BALL_RESET_X;
@@ -32,6 +32,9 @@ int need_refresh= 1;
 
 int ball_delay= INITIAL_BALL_DELAY;
 
+bool game_over= false;
+bool go= true;
+
 long exec_t2= millis();
 
 
@@ -39,6 +42,7 @@ void setup() {
   Serial.begin(9600);
   // start LED matrix
   matrix.begin();
+
   pinMode(P1_BTN_UP, INPUT_PULLUP);
   pinMode(P1_BTN_BOTTOM, INPUT_PULLUP);
   pinMode(P2_BTN_UP, INPUT_PULLUP);
@@ -48,17 +52,56 @@ void setup() {
 }
 
 void loop() {
-  long exec_t1= millis();
-  pong_move_p1(p1_start, need_refresh);
-  pong_move_p2(p2_start, need_refresh);
-  if (exec_t1 - exec_t2 > ball_delay) {
-    move_ball(ball_x, ball_y, ball_delay, p1_start, p2_start, need_refresh);
-    exec_t2= exec_t1;
-  }
-  if (need_refresh) {
-    render_matrix(frame, p1_start, p2_start, ball_x, ball_y);
+  for (int i = START_TIMER; i >= 0; i--) {
+    render_timer(frame, i);
+    delay(1000);
     matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
-    need_refresh= 0;
   }
-  delay(50);
+
+  game_over= false;
+  go= true;
+
+  // delay the first ball movement
+  exec_t2= millis() + FIRST_START_BALL_DELAY;
+  
+  while (go) {
+    long exec_t1= millis();
+    pong_move_p1(players_coords[0], need_refresh);
+    pong_move_p2(players_coords[1], need_refresh);
+    if (exec_t1 - exec_t2 > ball_delay) {
+      bool scored= move_ball(ball_x, ball_y, ball_delay, players_coords, players_scores, need_refresh);
+      if (scored) {
+        render_score(frame, players_scores);
+        matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+        delay(1000);
+        if (players_scores[0] >= MAX_POINTS || players_scores[1] >= MAX_POINTS) {
+          render_winner(frame, matrix, players_scores);
+          need_refresh= 0;
+          game_over= true;
+        }
+        // delay the ball movement after score
+        exec_t2= millis() + FIRST_START_BALL_DELAY;
+      } else exec_t2= exec_t1;
+    }
+    
+    // rerender matrix only if something is changed
+    if (need_refresh) {
+      render_matrix(frame, players_coords, ball_x, ball_y);
+      matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+      need_refresh= 0;
+    }
+    if (!game_over) delay(50);
+    
+    // keep showing the winner waiting for a restart
+    while (game_over) {
+      // restart game once one button is pressed
+      if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW || digitalRead(P2_BTN_UP) == LOW || digitalRead(P2_BTN_BOTTOM) == LOW) {
+        go= false;
+        game_over= false;
+        players_scores[0]= 0;
+        players_scores[1]= 0;
+      }
+      delay(100);
+    }
+  }
 }
