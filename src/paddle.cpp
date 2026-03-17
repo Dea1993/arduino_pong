@@ -1,32 +1,34 @@
-#include <stdint.h>
+#include <Arduino.h>
 #include "config.h"
+#include "paddle.h"
 
-class Paddle {
+void Paddle::move_pad_up() {
+  if (_position > 0) {
+    _position -= 1;
+  }
+}
+void Paddle::move_pad_down() {
+  if (_position + _height < MATRIX_HEIGHT) {
+    _position += 1;
+  }
+}
 
-  private:
-    // define player coordinates
-    uint8_t _position, _height;
-    bool _human;
+uint8_t Paddle::get_position() {
+  return _position;
+}
 
-  public:
-    void move_pad_up(bool &need_refresh) {
-      if (_position > 0) {
-        _position -= 1;
-        need_refresh= true;
-      }
-    }
-    void move_pad_down(bool &need_refresh) {
-      if (_position + _height <= MATRIX_HEIGHT) {
-        _position += 1;
-        need_refresh= true;
-      }
-    }
+bool Paddle::is_human() {
+  return _human;
+}
 
-    uint8_t get_position() {
-      return _position;
-    }
+void Paddle::increase_score() {
+  if (_score <= 9) _score += 1;
+}
 
-    bool is_human() {
-      return _human;
-    }
-};
+uint8_t Paddle::get_score() {
+  return _score;
+}
+
+void Paddle::reset() {
+  _score= 0;
+}
