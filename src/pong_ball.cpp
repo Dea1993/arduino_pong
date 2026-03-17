@@ -33,7 +33,7 @@ void point_scored(int &ball_x, int &ball_y, int &ball_delay, int players_scores[
   ball_delay= INITIAL_BALL_DELAY;
 }
 
-bool move_ball(int &ball_x, int &ball_y, int &ball_delay, int players_coords[2], int players_scores[2], int &need_refresh) {
+bool move_ball(int &ball_x, int &ball_y, int &ball_delay, int players_coords[2], int players_scores[2]) {
   if (ball_x < 0 || ball_x > MATRIX_WIDTH-1 || ball_y < 0 || ball_y > MATRIX_HEIGHT-1) {
     // ball out of matrix limits
     ball_x= BALL_RESET_X;
@@ -41,7 +41,6 @@ bool move_ball(int &ball_x, int &ball_y, int &ball_delay, int players_coords[2],
     return false;
   }
 
-  need_refresh= 1;
   bool scored= false;
   
   // if ball is not moving, get random direction
