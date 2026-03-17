@@ -29,11 +29,11 @@ void Engine::run(uint8_t &ball_delay) {
   uint8_t bx= _ball.get_x();
   uint8_t by= _ball.get_y();
 
-  if (bx == 0) {
+  if (bx <= 0) {
     if (!this -> _check_pad_ball_collision(_p1)) {
       // p2 scores
       _p2.increase_score();
-      _ball.reset_position();
+      _ball.reset_position(); // XXX this is probably too early i reset the position before render
       ball_delay= INITIAL_BALL_DELAY;
       Serial.println("Player 2 Scores");
       this -> _print_score();
@@ -50,7 +50,7 @@ void Engine::run(uint8_t &ball_delay) {
     if (!this -> _check_pad_ball_collision(_p2)) {
       // p1 scores
       _p1.increase_score();
-      _ball.reset_position();
+      _ball.reset_position(); // XXX this is probably too early i reset the position before render
       ball_delay= INITIAL_BALL_DELAY;
       Serial.println("Player 1 Scores");
       this -> _print_score();
@@ -73,7 +73,7 @@ void Engine::run(uint8_t &ball_delay) {
   // if ball is not at max speed
   if (_hits >= 6 && ball_delay >= 80) {
     _hits= 0;
-    ball_delay-= 20;
+    ball_delay-= 20; // XXX handle it on loop()
   }
 }
 
