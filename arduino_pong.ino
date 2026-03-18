@@ -71,38 +71,21 @@ void loop() {
       break;
 
     case RUN:
-      if (digitalRead(P1_BTN_UP) == LOW) {
-        p1.move_pad_up();
-        need_refresh= true;
-      }
-      else if (digitalRead(P1_BTN_BOTTOM) == LOW) {
-        p1.move_pad_down();
-        need_refresh= true;
-      }
-      if (digitalRead(P2_BTN_UP) == LOW) {
-        p2.move_pad_up();
-        need_refresh= true;
-      }
-      else if (digitalRead(P2_BTN_BOTTOM) == LOW) {
-        p2.move_pad_down();
-        need_refresh= true;
-      }
+      need_refresh= check_paddle_movements(p1, p2);
+
       if (exec_t1 - exec_t2 > ball_delay) {
         engine.run();
         if (engine.get_event() == P1SCORE || engine.get_event() == P2SCORE) {
           game_status= SCORE;
-          // delay the ball movement after score
-          exec_t2= millis() + FIRST_START_BALL_DELAY + 1000;
         }
         else if (engine.get_event() == P1_COLLISION || engine.get_event() == P2_COLLISION) {
           hits++;
           if (hits >= 6 && ball_delay >= 80) {
             hits= 0;
             ball_delay-= 20;
-            exec_t2= exec_t1;
           }
         }
-        else exec_t2= exec_t1;
+        exec_t2= exec_t1;
         need_refresh= true;
       }
       // rerender matrix only if something is changed
@@ -114,15 +97,22 @@ void loop() {
       break;
 
     case SCORE:
+      delay(300); // small delay to let see the last ball position
       render_score(frame, p1, p2);
       matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+      delay(1000);
       ball.reset_position();
       ball_delay= INITIAL_BALL_DELAY;
-      delay(1000);
       if (p1.get_score() >= MAX_POINTS || p2.get_score() >= MAX_POINTS) {
         game_status= GAMEOVER;
       }
-      else game_status= RUN;
+      else {
+        game_status= RUN;
+        // before move again the ball wait a second
+        render_matrix(frame, p1, p2, ball);
+        matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+        delay(1000);
+      }
       break;
 
     case GAMEOVER:

@@ -24,4 +24,6 @@ class Paddle {
     void reset();
 };
 
+bool check_paddle_movements(Paddle &p1, Paddle &p2);
+
 #endif
