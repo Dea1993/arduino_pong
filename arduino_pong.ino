@@ -62,8 +62,8 @@ void loop() {
     case TIMER:
       for (int i = START_TIMER; i >= 0; i--) {
         render_timer(frame, i);
-        delay(1000);
         matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+        delay(1000);
       }
       game_status= RUN;
       // delay the first ball movement
@@ -111,7 +111,6 @@ void loop() {
         matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
         need_refresh= false;
       }
-      delay(50);
       break;
 
     case SCORE:
@@ -138,7 +137,7 @@ void loop() {
         game_status= TIMER;
         engine.reset();
       }
-      delay(100);
       break;
   }
+  delay(50);
 }
