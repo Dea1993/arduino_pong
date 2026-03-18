@@ -1,6 +1,3 @@
-#include <Arduino.h>
-#include <stdint.h>
-#include "config.h"
 #include "ball.h"
 
 void Ball::_init_directions(int8_t &_direction) {
@@ -28,6 +25,13 @@ void Ball::bounce_on_pad() {
 
 void Ball::bounce_on_sides() {
   _direction_y *= -1;
+}
+
+int8_t Ball::get_direction_x() {
+  return _direction_x;
+}
+int8_t Ball::get_direction_y() {
+  return _direction_y;
 }
 
 void Ball::reset_position () {

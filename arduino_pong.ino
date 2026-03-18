@@ -23,7 +23,6 @@ ArduinoLEDMatrix matrix;
 
 int need_refresh= true;
 uint8_t hits= 0;
-uint8_t ball_delay= INITIAL_BALL_DELAY;
 long exec_t2= millis();
 
 enum game_statuses : uint8_t {
@@ -38,7 +37,7 @@ game_statuses game_status= TIMER;
 Ball ball(4, 6);
 Paddle p1(1);
 Paddle p2(4);
-Engine engine(p1, p2, ball);
+Engine engine(p1, p2, ball, INITIAL_BALL_DELAY);
 Renderer renderer(p1, p2, ball, frame, matrix);
 
 void setup() {
@@ -72,18 +71,10 @@ void loop() {
     case RUN:
       need_refresh= check_paddle_movements(p1, p2);
 
-      if (exec_t1 - exec_t2 > ball_delay) {
+      if (exec_t1 - exec_t2 > engine.ball_movement_delay()) {
         engine.run();
-        if (engine.get_event() == P1SCORE || engine.get_event() == P2SCORE) {
+        if (engine.get_event() == P1SCORE || engine.get_event() == P2SCORE)
           game_status= SCORE;
-        }
-        else if (engine.get_event() == P1_COLLISION || engine.get_event() == P2_COLLISION) {
-          hits++;
-          if (hits >= 6 && ball_delay >= 80) {
-            hits= 0;
-            ball_delay-= 20;
-          }
-        }
         exec_t2= exec_t1;
         need_refresh= true;
       }
@@ -95,19 +86,17 @@ void loop() {
       break;
 
     case SCORE:
-      delay(300); // small delay to let see the last ball position
+      delay(300);
       renderer.render_score();
+      engine.restart_ball();
       delay(1000);
-      ball.reset_position();
-      ball_delay= INITIAL_BALL_DELAY;
-      if (p1.get_score() >= MAX_POINTS || p2.get_score() >= MAX_POINTS) {
+      if (p1.get_score() >= MAX_POINTS || p2.get_score() >= MAX_POINTS)
         game_status= GAMEOVER;
-      }
       else {
         game_status= RUN;
         // before move again the ball wait a second
         renderer.render_matrix();
-        delay(1000);
+        exec_t2= millis() + FIRST_START_BALL_DELAY;
       }
       break;
 

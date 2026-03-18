@@ -60,13 +60,9 @@ void Renderer::render_score() {
 void Renderer::render_winner() {
   this -> _clear_matrix();
   // check winner 
-  if (_p1.get_score() > _p2.get_score()) {
-    Serial.println("Player 1 wins!!!");
+  if (_p1.get_score() > _p2.get_score())
     _matrix.loadSequence(pone_wins);
-  }
-  else {
-    Serial.println("Player 2 wins!!!");
+  else 
     _matrix.loadSequence(ptwo_wins);
-  }
   _matrix.play(true);
 }

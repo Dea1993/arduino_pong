@@ -1,7 +1,7 @@
 #ifndef BALL_H
 #define BALL_H
 
-#include <stdint.h>
+#include <Arduino.h>
 #include "config.h"
 
 class Ball {
@@ -17,6 +17,8 @@ class Ball {
     void move();
     void bounce_on_pad();
     void bounce_on_sides();
+    int8_t get_direction_x();
+    int8_t get_direction_y();
     void reset_position ();
     uint8_t get_x();
     uint8_t get_y();

@@ -15,17 +15,20 @@ class Engine {
     Paddle& _p2;
     Ball& _ball;
     EngineEvents _event= NONE;
+    uint8_t _ball_mv_delay;
+    uint8_t _hits = 0;
 
     bool _check_pad_ball_collision(Paddle &p);
-    void _print_score();
 
   public:
     // inizialize Engine constructor, linking all args with private args
-    Engine(Paddle &p_one, Paddle &p_two, Ball &ball)
-        : _p1(p_one), _p2(p_two), _ball(ball) {}
+    Engine(Paddle &p_one, Paddle &p_two, Ball &ball, uint8_t ball_mv_delay)
+        : _p1(p_one), _p2(p_two), _ball(ball), _ball_mv_delay(ball_mv_delay) {}
 
     void run();
+    uint8_t ball_movement_delay();
     EngineEvents get_event();
+    void restart_ball();
     void reset();
 };
 
