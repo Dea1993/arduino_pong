@@ -30,7 +30,7 @@ void Engine::run() {
     // score the point only if ball reached the edge
     if (this -> _check_pad_ball_collision(_p1) && bx == 1) {
       _ball.bounce_on_pad();
-      _event= P2_COLLISION;
+      _event= P1_COLLISION;
     }
     else if (bx <= 0) {
       // p2 scores
@@ -45,7 +45,7 @@ void Engine::run() {
     // score the point only if ball reached the edge
     if (this -> _check_pad_ball_collision(_p2) && bx == MATRIX_WIDTH-2) {
       _ball.bounce_on_pad();
-      _event= P1_COLLISION;
+      _event= P2_COLLISION;
     }
     else if (bx >= MATRIX_WIDTH-1) {
       // p1 scores
