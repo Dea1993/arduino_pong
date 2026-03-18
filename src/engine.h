@@ -14,7 +14,6 @@ class Engine {
     Paddle& _p1;
     Paddle& _p2;
     Ball& _ball;
-    uint8_t _hits;
     EngineEvents _event= NONE;
 
     bool _check_pad_ball_collision(Paddle &p);
@@ -25,7 +24,7 @@ class Engine {
     Engine(Paddle &p_one, Paddle &p_two, Ball &ball)
         : _p1(p_one), _p2(p_two), _ball(ball) {}
 
-    void run(uint8_t &ball_delay);
+    void run();
     EngineEvents get_event();
     void reset();
 };

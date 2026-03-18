@@ -23,7 +23,7 @@ void Engine::_print_score() {
   Serial.println();
 }
 
-void Engine::run(uint8_t &ball_delay) {
+void Engine::run() {
   _event= NONE;
   _ball.move();
   uint8_t bx= _ball.get_x();
@@ -33,15 +33,12 @@ void Engine::run(uint8_t &ball_delay) {
     if (!this -> _check_pad_ball_collision(_p1)) {
       // p2 scores
       _p2.increase_score();
-      _ball.reset_position(); // XXX this is probably too early i reset the position before render
-      ball_delay= INITIAL_BALL_DELAY;
       Serial.println("Player 2 Scores");
       this -> _print_score();
       _event= P2SCORE;
       return;
     }
     else {
-      _hits += 1;
       _ball.bounce_on_pad();
       _event= P2_COLLISION;
     }
@@ -50,15 +47,12 @@ void Engine::run(uint8_t &ball_delay) {
     if (!this -> _check_pad_ball_collision(_p2)) {
       // p1 scores
       _p1.increase_score();
-      _ball.reset_position(); // XXX this is probably too early i reset the position before render
-      ball_delay= INITIAL_BALL_DELAY;
       Serial.println("Player 1 Scores");
       this -> _print_score();
       _event= P1SCORE;
       return;
     }
     else {
-      _hits += 1;
       _ball.bounce_on_pad();
       _event= P1_COLLISION;
     }
@@ -67,13 +61,6 @@ void Engine::run(uint8_t &ball_delay) {
   if (by == 0 || by == MATRIX_HEIGHT-1) {
     _ball.bounce_on_sides();
     _event= WALL_COLLISION;
-  }
-
-  // increase ball speed every 6 hits on pads
-  // if ball is not at max speed
-  if (_hits >= 6 && ball_delay >= 80) {
-    _hits= 0;
-    ball_delay-= 20; // XXX handle it on loop()
   }
 }
 
