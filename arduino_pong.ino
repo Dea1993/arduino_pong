@@ -1,14 +1,11 @@
 #include "Arduino_LED_Matrix.h"
 
 #include "src/config.h"
-#include "src/pong_render.h"
-
+#include "src/renderer.h"
+#include "src/engine.h"
 #include "src/paddle.h"
 #include "src/ball.h"
-#include "src/engine.h"
 
-// create LED matrix object
-ArduinoLEDMatrix matrix;
 
 // initial pong frame matrix
 byte frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
@@ -21,6 +18,8 @@ byte frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
+
+ArduinoLEDMatrix matrix;
 
 int need_refresh= true;
 uint8_t hits= 0;
@@ -40,6 +39,7 @@ Ball ball(4, 6);
 Paddle p1(1);
 Paddle p2(4);
 Engine engine(p1, p2, ball);
+Renderer renderer(p1, p2, ball, frame, matrix);
 
 void setup() {
   Serial.begin(9600);
@@ -61,8 +61,7 @@ void loop() {
 
     case TIMER:
       for (int i = START_TIMER; i >= 0; i--) {
-        render_timer(frame, i);
-        matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+        renderer.render_timer(i);
         delay(1000);
       }
       game_status= RUN;
@@ -90,16 +89,14 @@ void loop() {
       }
       // rerender matrix only if something is changed
       if (need_refresh) {
-        render_matrix(frame, p1, p2, ball);
-        matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+        renderer.render_matrix();
         need_refresh= false;
       }
       break;
 
     case SCORE:
       delay(300); // small delay to let see the last ball position
-      render_score(frame, p1, p2);
-      matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+      renderer.render_score();
       delay(1000);
       ball.reset_position();
       ball_delay= INITIAL_BALL_DELAY;
@@ -109,14 +106,13 @@ void loop() {
       else {
         game_status= RUN;
         // before move again the ball wait a second
-        render_matrix(frame, p1, p2, ball);
-        matrix.renderBitmap(frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+        renderer.render_matrix();
         delay(1000);
       }
       break;
 
     case GAMEOVER:
-      render_winner(frame, matrix, p1, p2);
+      renderer.render_winner();
       game_status= WAIT;
       break;
 

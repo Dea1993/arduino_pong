@@ -1,5 +1,3 @@
-#include <Arduino.h>
-#include "config.h"
 #include "paddle.h"
 
 void Paddle::move_pad_up() {

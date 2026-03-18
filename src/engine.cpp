@@ -1,7 +1,3 @@
-#include <Arduino.h>
-#include "ball.h"
-#include "paddle.h"
-#include "config.h"
 #include "engine.h"
 
 bool Engine::_check_pad_ball_collision(Paddle &p) {
