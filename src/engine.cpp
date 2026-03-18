@@ -28,9 +28,15 @@ void Engine::run() {
   _ball.move();
   uint8_t bx= _ball.get_x();
   uint8_t by= _ball.get_y();
-
-  if (bx <= 0) {
-    if (!this -> _check_pad_ball_collision(_p1)) {
+  
+  // pad is 1 pixel far from the edge, so i need to calc this delta
+  if (bx <= 1) {
+    // score the point only if ball reached the edge
+    if (this -> _check_pad_ball_collision(_p1) && bx == 1) {
+      _ball.bounce_on_pad();
+      _event= P2_COLLISION;
+    }
+    else if (bx <= 0) {
       // p2 scores
       _p2.increase_score();
       Serial.println("Player 2 Scores");
@@ -38,23 +44,20 @@ void Engine::run() {
       _event= P2SCORE;
       return;
     }
-    else {
-      _ball.bounce_on_pad();
-      _event= P2_COLLISION;
-    }
   }
-  else if (bx >= MATRIX_WIDTH-1) {
-    if (!this -> _check_pad_ball_collision(_p2)) {
+  else if (bx >= MATRIX_WIDTH-2) {
+    // score the point only if ball reached the edge
+    if (this -> _check_pad_ball_collision(_p2) && bx == MATRIX_WIDTH-2) {
+      _ball.bounce_on_pad();
+      _event= P1_COLLISION;
+    }
+    else if (bx >= MATRIX_WIDTH-1) {
       // p1 scores
       _p1.increase_score();
       Serial.println("Player 1 Scores");
       this -> _print_score();
       _event= P1SCORE;
       return;
-    }
-    else {
-      _ball.bounce_on_pad();
-      _event= P1_COLLISION;
     }
   }
   
