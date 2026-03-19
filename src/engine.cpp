@@ -64,9 +64,9 @@ bool Engine::control_players() {
   bool need_refresh= false;
 
   if (_p1.is_human()) need_refresh |= _p1.check_pad_movement();
-  else need_refresh |= _p1.check_pad_movement();
+  else need_refresh |= _p1.check_pad_movement(_ball);
   if (_p2.is_human()) need_refresh |= _p2.check_pad_movement();
-  else need_refresh |= _p2.check_pad_movement();
+  else need_refresh |= _p2.check_pad_movement(_ball);
   return need_refresh;
 }
 

@@ -36,7 +36,9 @@ int8_t Ball::get_direction_y() {
 
 void Ball::reset_position () {
   _x= BALL_RESET_X;
-  _y= BALL_RESET_Y;
+  int8_t delta= random(3);
+  if (random(2) == 0) delta *= -1;
+  _y= BALL_RESET_Y + delta;
   this -> _init_directions(_direction_x);
   this -> _init_directions(_direction_y);
 }
