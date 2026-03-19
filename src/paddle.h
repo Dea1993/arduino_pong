@@ -49,7 +49,7 @@ class BotPaddle : public Paddle {
     BotPaddle(uint8_t position, uint8_t pos_x, uint8_t skills) 
               : Paddle(position, false), _pos_x(pos_x), _skills(skills) {
                 if (_skills < 1) _skills= 1;
-                if (_skills > 3) _skills= 3;
+                if (_skills > 2) _skills= 2;
               }
     bool check_pad_movement(Ball &ball);
     uint8_t get_skills();

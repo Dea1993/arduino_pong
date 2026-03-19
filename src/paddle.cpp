@@ -1,4 +1,5 @@
 #include "paddle.h"
+#include <cstdio>
 
 void Paddle::move_pad_up() {
   if (_pos_y > 0) {
@@ -63,6 +64,7 @@ bool HumanPaddle::check_pad_movement() {
 bool BotPaddle::check_pad_movement(Ball &ball) {
   uint8_t ball_y= ball.get_y();
   int8_t ball_dir= ball.get_direction_x();
+  int8_t ball_dir_ver= ball.get_direction_y();
 
   // ball is moving left and pad is on right, do not move
   if (ball_dir < 0 && _pos_x > MATRIX_WIDTH / 2) return false;
@@ -74,26 +76,38 @@ bool BotPaddle::check_pad_movement(Ball &ball) {
   if (ball_distance < 0) ball_distance *= -1;
   switch (this -> get_skills()) {
     case 1:
-      if (ball_distance > MATRIX_WIDTH / 2 - 2) return false;
+      if (ball_distance > 2) return false;
       break;
     case 2:
-      if (ball_distance > MATRIX_WIDTH / 2 - 1) return false;
-      break;
-    case 3:
-      if (ball_distance > MATRIX_WIDTH / 2) return false;
+      if (ball_distance > 3) return false;
       break;
   }
 
   // TODO BotPaddle movement logics
   // on higher difficult level i could also check the ball direction
   // or at lover difficulty level i could also check the distance from the pad and move only when the ball si near
-
-  for (uint8_t py= _pos_y; py < _pos_y+PADDLE_LENGTH; py++) {
-    // don't move if ball is already centered to the pad
-    if (py == ball_y) continue;
-    else if (_pos_y - ball_y >= 0) this -> move_pad_up();
-    else this -> move_pad_down();
+  enum Movement {NONE, UP, DOWN};
+  Movement _movment= NONE;
+  
+  for (uint8_t py= _pos_y; py < _pos_y+PADDLE_LENGTH-1; py++) {
+    if (_pos_y - ball_y >= 0 && ball_dir_ver < 0) {
+      _movment= UP;
+      break;
+    }
+    if (_pos_y - ball_y <= 0 && ball_dir_ver > 0) {
+      _movment= DOWN;
+      break;
+    }
   }
+  if (_movment == UP) {
+    this -> move_pad_up();
+    return true;
+  }
+  if (_movment == DOWN) {
+    this -> move_pad_down();
+    return true;
+  }
+  return false;
 }
 
 uint8_t BotPaddle::get_skills() {

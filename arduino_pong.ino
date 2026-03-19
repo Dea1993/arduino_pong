@@ -37,8 +37,8 @@ game_statuses game_status= TIMER;
 Ball ball(4, 6);
 // HumanPaddle p1(1, P1_BTN_UP, P1_BTN_BOTTOM);
 // HumanPaddle p2(4, P2_BTN_UP, P2_BTN_BOTTOM);
-BotPaddle p1(1, 0, 1);
-BotPaddle p2(4, MATRIX_WIDTH-1, 1);
+BotPaddle p1(1, 0, 2);
+BotPaddle p2(4, MATRIX_WIDTH-1, 2);
 Engine engine(p1, p2, ball, INITIAL_BALL_DELAY);
 Renderer renderer(p1, p2, ball, frame, matrix);
 
@@ -72,7 +72,7 @@ void loop() {
 
     case RUN:
       // need_refresh= check_paddle_movements(p1, p2);
-      need_refresh= engine.control_players();
+      need_refresh= engine.control_players(exec_t2);
 
       if (exec_t1 - exec_t2 > engine.ball_movement_delay()) {
         engine.run();
