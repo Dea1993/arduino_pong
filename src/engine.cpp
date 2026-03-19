@@ -60,6 +60,13 @@ void Engine::run() {
   }
 }
 
+bool Engine::control_players() {
+  bool need_refresh= false;
+  need_refresh |= _p1.check_pad_movement();
+  need_refresh |= _p2.check_pad_movement();
+  return need_refresh;
+}
+
 uint8_t Engine::ball_movement_delay() {
   return _ball_mv_delay;
 }

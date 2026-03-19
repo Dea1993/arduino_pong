@@ -21,7 +21,7 @@ byte frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
 
 ArduinoLEDMatrix matrix;
 
-int need_refresh= true;
+bool need_refresh= true;
 uint8_t hits= 0;
 long exec_t2= millis();
 
@@ -35,8 +35,8 @@ enum game_statuses : uint8_t {
 game_statuses game_status= TIMER;
 
 Ball ball(4, 6);
-Paddle p1(1);
-Paddle p2(4);
+HumanPaddle p1(1, P1_BTN_UP, P1_BTN_BOTTOM);
+HumanPaddle p2(4, P2_BTN_UP, P2_BTN_BOTTOM);
 Engine engine(p1, p2, ball, INITIAL_BALL_DELAY);
 Renderer renderer(p1, p2, ball, frame, matrix);
 
@@ -69,7 +69,8 @@ void loop() {
       break;
 
     case RUN:
-      need_refresh= check_paddle_movements(p1, p2);
+      // need_refresh= check_paddle_movements(p1, p2);
+      need_refresh= engine.control_players();
 
       if (exec_t1 - exec_t2 > engine.ball_movement_delay()) {
         engine.run();

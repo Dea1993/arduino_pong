@@ -26,6 +26,7 @@ class Engine {
         : _p1(p_one), _p2(p_two), _ball(ball), _ball_mv_delay(ball_mv_delay) {}
 
     void run();
+    bool control_players();
     uint8_t ball_movement_delay();
     EngineEvents get_event();
     void restart_ball();

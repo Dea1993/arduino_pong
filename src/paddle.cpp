@@ -11,6 +11,9 @@ void Paddle::move_pad_down() {
   }
 }
 
+void run_paddle() {
+}
+
 uint8_t Paddle::get_position() {
   return _position;
 }
@@ -31,24 +34,23 @@ void Paddle::reset() {
   _score= 0;
 }
 
-bool check_paddle_movements(Paddle &p1, Paddle &p2) {
-  bool need_refresh= false;
-  if (digitalRead(P1_BTN_UP) == LOW) {
-    p1.move_pad_up();
-    need_refresh= true;
-  }
-  else if (digitalRead(P1_BTN_BOTTOM) == LOW) {
-    p1.move_pad_down();
-    need_refresh= true;
-  }
+bool Paddle::check_pad_movement() {
+  // redefine me
+  return false;
+}
 
-  if (digitalRead(P2_BTN_UP) == LOW) {
-    p2.move_pad_up();
+bool HumanPaddle::check_pad_movement() {
+  bool need_refresh= false;
+  if (digitalRead(_pin_btn_top) == LOW) {
+    this -> move_pad_up();
     need_refresh= true;
   }
-  else if (digitalRead(P2_BTN_BOTTOM) == LOW) {
-    p2.move_pad_down();
+  else if (digitalRead(_pin_btn_bottom) == LOW) {
+    this -> move_pad_down();
     need_refresh= true;
   }
   return need_refresh;
+}
+
+bool BotPaddle::check_pad_movement() {
 }
