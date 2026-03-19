@@ -36,15 +36,12 @@ enum game_statuses : uint8_t {
 game_statuses game_status= TIMER;
 
 Ball ball(4, 6);
-
-Paddle* p1 = nullptr;
-Paddle* p2 = nullptr;
-HumanPaddle human_p1(1, P1_BTN_UP, P1_BTN_BOTTOM);
-HumanPaddle human_p2(4, P2_BTN_UP, P2_BTN_BOTTOM);
-BotPaddle bot_p1(1, 0, 2);
-BotPaddle bot_p2(4, MATRIX_WIDTH-1, 1);
-Engine engine(*p1, *p2, ball, INITIAL_BALL_DELAY);
-Renderer renderer(*p1, *p2, ball, frame, matrix);
+HumanPaddle p1(1, P1_BTN_UP, P1_BTN_BOTTOM);
+// HumanPaddle p2(4, P2_BTN_UP, P2_BTN_BOTTOM);
+// BotPaddle p1(1, 0, 2);
+BotPaddle p2(4, MATRIX_WIDTH-1, 1);
+Engine engine(p1, p2, ball, INITIAL_BALL_DELAY);
+Renderer renderer(p1, p2, ball, frame, matrix);
 
 void setup() {
   Serial.begin(9600);
@@ -65,23 +62,11 @@ void loop() {
   switch (game_status) {
 
     case MENU:
-      // TODO render menu on matrix
-      // i could use slideshow
+      // show menu on the matrix
       // 1. P vs P
-      if (digitalRead(P1_BTN_UP) == LOW) {
-        p1= &human_p1;
-        p2= &human_p2;
-      }
       // 2. P vs CPU
-      else if (digitalRead(P1_BTN_BOTTOM) == LOW) {
-        p1= &human_p1;
-        p2= &bot_p2;
-      }
       // 3. CPU vs CPU
-      else if (digitalRead(P2_BTN_UP) == LOW) {
-        p1= &bot_p1;
-        p2= &bot_p2;
-      }
+      // slideshow menu
       break;
 
     case TIMER:
@@ -116,7 +101,7 @@ void loop() {
       renderer.render_score();
       engine.restart_ball();
       delay(1000);
-      if (p1->get_score() >= MAX_POINTS || p2->get_score() >= MAX_POINTS)
+      if (p1.get_score() >= MAX_POINTS || p2.get_score() >= MAX_POINTS)
         game_status= GAMEOVER;
       else {
         game_status= RUN;
