@@ -60,29 +60,13 @@ void Engine::run() {
   }
 }
 
-bool Engine::control_players(long exec_t2) {
+bool Engine::control_players() {
   bool need_refresh= false;
 
   if (_p1.is_human()) need_refresh |= _p1.check_pad_movement();
-  else {
-    uint8_t ball_delay= this -> ball_movement_delay();
-    long exec_t1= millis();
-    uint8_t skill= _p1.get_skills();
-    
-    if (exec_t1 - exec_t2 > ball_delay - (skill * 10)) {
-      need_refresh |= _p1.check_pad_movement(_ball);
-    }
-  }
+  else need_refresh |= _p1.check_pad_movement();
   if (_p2.is_human()) need_refresh |= _p2.check_pad_movement();
-  else {
-    uint8_t ball_delay= this -> ball_movement_delay();
-    long exec_t1= millis();
-    uint8_t skill= _p1.get_skills();
-    
-    if (exec_t1 - exec_t2 > ball_delay - (skill * 10)) {
-      need_refresh |= _p2.check_pad_movement(_ball);
-    }
-  }
+  else need_refresh |= _p2.check_pad_movement();
   return need_refresh;
 }
 

@@ -26,6 +26,7 @@ uint8_t hits= 0;
 long exec_t2= millis();
 
 enum game_statuses : uint8_t {
+  MENU,
   TIMER,
   RUN,
   SCORE,
@@ -38,7 +39,7 @@ Ball ball(4, 6);
 // HumanPaddle p1(1, P1_BTN_UP, P1_BTN_BOTTOM);
 // HumanPaddle p2(4, P2_BTN_UP, P2_BTN_BOTTOM);
 BotPaddle p1(1, 0, 2);
-BotPaddle p2(4, MATRIX_WIDTH-1, 2);
+BotPaddle p2(4, MATRIX_WIDTH-1, 1);
 Engine engine(p1, p2, ball, INITIAL_BALL_DELAY);
 Renderer renderer(p1, p2, ball, frame, matrix);
 
@@ -60,6 +61,14 @@ void loop() {
 
   switch (game_status) {
 
+    case MENU:
+      // show menu on the matrix
+      // 1. P vs P
+      // 2. P vs CPU
+      // 3. CPU vs CPU
+      // slideshow menu
+      break;
+
     case TIMER:
       for (int i = START_TIMER; i >= 0; i--) {
         renderer.render_timer(i);
@@ -71,8 +80,7 @@ void loop() {
       break;
 
     case RUN:
-      // need_refresh= check_paddle_movements(p1, p2);
-      need_refresh= engine.control_players(exec_t2);
+      need_refresh= engine.control_players();
 
       if (exec_t1 - exec_t2 > engine.ball_movement_delay()) {
         engine.run();
