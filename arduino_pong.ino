@@ -119,7 +119,8 @@ void loop() {
     case WAIT:
       // keep showing the winner waiting for a restart
       // restart game once one button is pressed
-      if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW || digitalRead(P2_BTN_UP) == LOW || digitalRead(P2_BTN_BOTTOM) == LOW) {
+      if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW || 
+          digitalRead(P2_BTN_UP) == LOW || digitalRead(P2_BTN_BOTTOM) == LOW) {
         game_status= TIMER;
         engine.reset();
       }
