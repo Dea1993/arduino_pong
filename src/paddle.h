@@ -2,6 +2,7 @@
 #define PADDLE_H
 
 #include <Arduino.h>
+#include <cstdint>
 #include "config.h"
 #include "ball.h"
 
@@ -9,13 +10,13 @@ class Paddle {
 
   protected:
     // define player coordinates
-    uint8_t _position;
+    uint8_t _pos_y;
     uint8_t _height= PADDLE_LENGTH;
     uint8_t _score= 0;
     bool _human;
 
   public:
-    Paddle (uint8_t position, bool human) : _position(position), _human(human) {}
+    Paddle (uint8_t pos_y, bool human) : _pos_y(pos_y), _human(human) {}
     void move_pad_up();
     void move_pad_down();
     uint8_t get_position();
@@ -25,6 +26,7 @@ class Paddle {
     void reset();
     virtual bool check_pad_movement();
     virtual bool check_pad_movement(Ball &ball);
+    virtual uint8_t get_skills();
 };
 
 class HumanPaddle : public Paddle {
@@ -38,16 +40,19 @@ class HumanPaddle : public Paddle {
 };
 
 class BotPaddle : public Paddle {
+
   private:
-    uint8_t _level; // this is the difficulty level
+    uint8_t _pos_x;
+    uint8_t _skills; // this is the difficulty level
 
   public:
-    BotPaddle(uint8_t position, uint8_t level) 
-              : Paddle(position, false), _level(level) {
-                if (_level < 1) _level= 1;
-                if (_level > 3) _level= 3;
+    BotPaddle(uint8_t position, uint8_t pos_x, uint8_t skills) 
+              : Paddle(position, false), _pos_x(pos_x), _skills(skills) {
+                if (_skills < 1) _skills= 1;
+                if (_skills > 3) _skills= 3;
               }
     bool check_pad_movement(Ball &ball);
+    uint8_t get_skills();
 };
 
 #endif
