@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "config.h"
+#include "ball.h"
 
 class Paddle {
 
@@ -23,6 +24,7 @@ class Paddle {
     uint8_t get_score();
     void reset();
     virtual bool check_pad_movement();
+    virtual bool check_pad_movement(Ball &ball);
 };
 
 class HumanPaddle : public Paddle {
@@ -45,7 +47,7 @@ class BotPaddle : public Paddle {
                 if (_level < 1) _level= 1;
                 if (_level > 3) _level= 3;
               }
-    bool check_pad_movement();
+    bool check_pad_movement(Ball &ball);
 };
 
 #endif

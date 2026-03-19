@@ -36,7 +36,8 @@ game_statuses game_status= TIMER;
 
 Ball ball(4, 6);
 HumanPaddle p1(1, P1_BTN_UP, P1_BTN_BOTTOM);
-HumanPaddle p2(4, P2_BTN_UP, P2_BTN_BOTTOM);
+// HumanPaddle p2(4, P2_BTN_UP, P2_BTN_BOTTOM);
+BotPaddle p2(4, 1);
 Engine engine(p1, p2, ball, INITIAL_BALL_DELAY);
 Renderer renderer(p1, p2, ball, frame, matrix);
 

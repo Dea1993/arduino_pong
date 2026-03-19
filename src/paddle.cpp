@@ -39,6 +39,11 @@ bool Paddle::check_pad_movement() {
   return false;
 }
 
+bool Paddle::check_pad_movement(Ball &ball) {
+  // redefine me
+  return false;
+}
+
 bool HumanPaddle::check_pad_movement() {
   bool need_refresh= false;
   if (digitalRead(_pin_btn_top) == LOW) {
@@ -52,5 +57,15 @@ bool HumanPaddle::check_pad_movement() {
   return need_refresh;
 }
 
-bool BotPaddle::check_pad_movement() {
+bool BotPaddle::check_pad_movement(Ball &ball) {
+  uint8_t y= ball.get_y();
+  // TODO BotPaddle movement logics
+  // on higher difficult level i could also check the ball direction
+  // or at lover difficulty level i could also check the distance from the pad and move only when the ball si near
+  for (uint8_t _py= _position; _py < _position+PADDLE_LENGTH; _py++) {
+    // don't move if ball is already centered to the pad
+    if (_py == y) continue;
+    else if (_position - y >= 0) this -> move_pad_up();
+    else this -> move_pad_down();
+  }
 }
