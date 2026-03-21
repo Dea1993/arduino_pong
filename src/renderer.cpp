@@ -9,6 +9,11 @@ void Renderer::_clear_matrix() {
   }
 }
 
+void Renderer::set_players(Paddle *p1, Paddle *p2) {
+  _p1= p1;
+  _p2= p2;
+}
+
 void Renderer::render_timer(uint8_t seconds) {
   this -> _clear_matrix();
 
@@ -22,8 +27,8 @@ void Renderer::render_timer(uint8_t seconds) {
 
 void Renderer::render_matrix() {
   this -> _clear_matrix();
-  uint8_t p1pos= _p1.get_position();
-  uint8_t p2pos= _p2.get_position();
+  uint8_t p1pos= _p1 -> get_position();
+  uint8_t p2pos= _p2 -> get_position();
   // players coords
   for (int i= p1pos; i < p1pos+PADDLE_LENGTH; i++) {
     _frame[i][0]= 1;
@@ -46,12 +51,12 @@ void Renderer::render_score() {
 
   for (int h=0; h < 8; h++) {
     for (int w=0; w < 3; w++) {
-      _frame[h][w+1]= font_pong[_p1.get_score()][h][w];
+      _frame[h][w+1]= font_pong[_p1 -> get_score()][h][w];
     }
   }
   for (int h=0; h < 8; h++) {
     for (int w=0; w < 3; w++) {
-      _frame[h][w+8]= font_pong[_p2.get_score()][h][w];
+      _frame[h][w+8]= font_pong[_p2 -> get_score()][h][w];
     }
   }
   _matrix.renderBitmap(_frame, MATRIX_HEIGHT, MATRIX_WIDTH);
@@ -60,7 +65,7 @@ void Renderer::render_score() {
 void Renderer::render_winner() {
   this -> _clear_matrix();
   // check winner 
-  if (_p1.get_score() > _p2.get_score())
+  if (_p1 -> get_score() > _p2 -> get_score())
     _matrix.loadSequence(pone_wins);
   else 
     _matrix.loadSequence(ptwo_wins);

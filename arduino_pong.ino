@@ -33,15 +33,19 @@ enum game_statuses : uint8_t {
   GAMEOVER,
   WAIT,
 };
-game_statuses game_status= TIMER;
+game_statuses game_status= MENU;
 
 Ball ball(4, 6);
-HumanPaddle p1(1, P1_BTN_UP, P1_BTN_BOTTOM);
-// HumanPaddle p2(4, P2_BTN_UP, P2_BTN_BOTTOM);
-// BotPaddle p1(1, 0, 2);
-BotPaddle p2(4, MATRIX_WIDTH-1, 1);
-Engine engine(p1, p2, ball, INITIAL_BALL_DELAY);
-Renderer renderer(p1, p2, ball, frame, matrix);
+
+Paddle* p1= nullptr;
+Paddle* p2= nullptr;
+HumanPaddle human_pad1(1, P1_BTN_UP, P1_BTN_BOTTOM);
+HumanPaddle human_pad2(4, P2_BTN_UP, P2_BTN_BOTTOM);
+BotPaddle bot_pad1(1, 0, 2);
+BotPaddle bot_pad2(4, MATRIX_WIDTH-1, 2);
+
+Engine engine(ball, INITIAL_BALL_DELAY);
+Renderer renderer(ball, frame, matrix);
 
 void setup() {
   Serial.begin(9600);
@@ -63,9 +67,31 @@ void loop() {
 
     case MENU:
       // show menu on the matrix
+      // matrix.renderBitmap(pvp_frame, MATRIX_HEIGHT, MATRIX_WIDTH);
       // 1. P vs P
+      if (digitalRead(P1_BTN_UP) == LOW) {
+        p1= &human_pad1;
+        p2= &human_pad2;
+        engine.set_players(p1, p2);
+        renderer.set_players(p1, p2);
+        game_status= TIMER;
+      }
       // 2. P vs CPU
+      else if (digitalRead(P1_BTN_BOTTOM) == LOW) {
+        p1= &human_pad1;
+        p2= &bot_pad2;
+        engine.set_players(p1, p2);
+        renderer.set_players(p1, p2);
+        game_status= TIMER;
+      }
       // 3. CPU vs CPU
+      else if (digitalRead(P2_BTN_UP) == LOW) {
+        p1= &bot_pad1;
+        p2= &bot_pad2;
+        engine.set_players(p1, p2);
+        renderer.set_players(p1, p2);
+        game_status= TIMER;
+      }
       // slideshow menu
       break;
 
@@ -101,7 +127,7 @@ void loop() {
       renderer.render_score();
       engine.restart_ball();
       delay(1000);
-      if (p1.get_score() >= MAX_POINTS || p2.get_score() >= MAX_POINTS)
+      if (p1 -> get_score() >= MAX_POINTS || p2 -> get_score() >= MAX_POINTS)
         game_status= GAMEOVER;
       else {
         game_status= RUN;

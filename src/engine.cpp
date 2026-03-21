@@ -1,7 +1,7 @@
 #include "engine.h"
 
-bool Engine::_check_pad_ball_collision(Paddle &p) {
-  uint8_t ppos= p.get_position();
+bool Engine::_check_pad_ball_collision(Paddle *p) {
+  uint8_t ppos= p -> get_position();
   for (int p= ppos; p < ppos + PADDLE_LENGTH; p++) {
     if (_ball.get_y() == p) {
       return true;
@@ -29,7 +29,7 @@ void Engine::run() {
     }
     else if (bx <= 0) {
       // p2 scores
-      _p2.increase_score();
+      _p2 -> increase_score();
       _event= P2SCORE;
       return;
     }
@@ -43,7 +43,7 @@ void Engine::run() {
     }
     else if (bx >= MATRIX_WIDTH-1) {
       // p1 scores
-      _p1.increase_score();
+      _p1 -> increase_score();
       _event= P1SCORE;
       return;
     }
@@ -60,13 +60,18 @@ void Engine::run() {
   }
 }
 
+void Engine::set_players(Paddle *p1, Paddle *p2) {
+  _p1= p1;
+  _p2= p2;
+}
+
 bool Engine::control_players() {
   bool need_refresh= false;
 
-  if (_p1.is_human()) need_refresh |= _p1.check_pad_movement();
-  else need_refresh |= _p1.check_pad_movement(_ball);
-  if (_p2.is_human()) need_refresh |= _p2.check_pad_movement();
-  else need_refresh |= _p2.check_pad_movement(_ball);
+  if (_p1 -> is_human()) need_refresh |= _p1 -> check_pad_movement();
+  else need_refresh |= _p1 -> check_pad_movement(_ball);
+  if (_p2 -> is_human()) need_refresh |= _p2 -> check_pad_movement();
+  else need_refresh |= _p2 -> check_pad_movement(_ball);
   return need_refresh;
 }
 
@@ -86,6 +91,6 @@ void Engine::restart_ball() {
 
 void Engine::reset() {
   this -> restart_ball();
-  _p1.reset();
-  _p2.reset();
+  _p1 -> reset();
+  _p2 -> reset();
 }
