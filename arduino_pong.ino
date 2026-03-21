@@ -159,7 +159,7 @@ void loop() {
         renderer.render_timer(i);
         delay(1000);
       }
-      game_status= MENU;
+      game_status= RUN;
       // delay the first ball movement
       exec_t2= millis() + FIRST_START_BALL_DELAY;
       break;
@@ -206,7 +206,7 @@ void loop() {
       // restart game once one button is pressed
       if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW || 
           digitalRead(P2_BTN_UP) == LOW || digitalRead(P2_BTN_BOTTOM) == LOW) {
-        game_status= TIMER;
+        game_status= MENU;
         engine.reset();
       }
       break;
