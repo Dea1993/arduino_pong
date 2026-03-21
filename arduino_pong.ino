@@ -27,6 +27,7 @@ long exec_t2= millis();
 
 enum game_statuses : uint8_t {
   MENU,
+  MENU_BOT_SKILLS,
   TIMER,
   RUN,
   SCORE,
@@ -45,12 +46,14 @@ Paddle* p1= nullptr;
 Paddle* p2= nullptr;
 HumanPaddle human_pad1(1, P1_BTN_UP, P1_BTN_BOTTOM);
 HumanPaddle human_pad2(4, P2_BTN_UP, P2_BTN_BOTTOM);
-BotPaddle bot_pad1(1, 0, 2);
-BotPaddle bot_pad2(4, MATRIX_WIDTH-1, 2);
+BotPaddle bot_pad1(1, 0);
+BotPaddle bot_pad2(4, MATRIX_WIDTH-1);
 
 uint8_t current_gmode_idx= 0;
-bool update_menu= 1;
-bool mode_selected= 0;
+bool update_menu= true;
+bool mode_selected= false;
+uint8_t current_bot_menu_idx= 0;
+bool update_menu_bot_skills= true;
 
 Engine engine(ball, INITIAL_BALL_DELAY);
 Renderer renderer(ball, frame, matrix);
@@ -81,6 +84,7 @@ void loop() {
       else if (digitalRead(P2_BTN_UP) == LOW && current_gmode_idx > 0) {
         update_menu= true;
         current_gmode_idx -= 1;
+        game_mode= PVP;
       }
 
       // 1. P vs P
@@ -94,12 +98,16 @@ void loop() {
         p1= &human_pad1;
         p2= &bot_pad2;
         mode_selected= true;
+        update_menu= false;
+        game_mode= PVC;
       }
       // 3. CPU vs CPU
       else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && game_modes(current_gmode_idx) == CVC) {
         p1= &bot_pad1;
         p2= &bot_pad2;
         mode_selected= true;
+        update_menu= false;
+        game_mode= CVC;
       }
 
       if (update_menu) {
@@ -112,7 +120,36 @@ void loop() {
       else if (mode_selected) {
         engine.set_players(p1, p2);
         renderer.set_players(p1, p2);
+        if (game_mode == PVC || game_mode == CVC) {
+          game_status= MENU_BOT_SKILLS;
+          delay(300); // avoid accidental double click for next menu
+        }
+        else game_status= TIMER;
+      }
+      break;
+    }
+
+    case MENU_BOT_SKILLS: {
+      if (digitalRead(P2_BTN_BOTTOM) == LOW && current_bot_menu_idx < sizeof(frame_bot_skills)/sizeof(frame_bot_skills[0]) -1) {
+        current_bot_menu_idx += 1;
+        update_menu_bot_skills= true;
+      }
+      else if (digitalRead(P2_BTN_UP) == LOW && current_bot_menu_idx > 0) {
+        current_bot_menu_idx -= 1;
+        update_menu_bot_skills= true;
+      }
+      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW) {
+        if (!p1 -> is_human()) p1 -> set_skills(current_bot_menu_idx + 1);
+        if (!p2 -> is_human()) p2 -> set_skills(current_bot_menu_idx + 1);
         game_status= TIMER;
+        update_menu_bot_skills= false;
+      }
+
+      if (update_menu_bot_skills) {
+        const byte (*current_skill_frame)[12]= frame_bot_skills[current_bot_menu_idx];
+        matrix.loadPixels((uint8_t*)current_skill_frame, MATRIX_HEIGHT * MATRIX_WIDTH);
+        update_menu= false;
+        delay(300);
       }
       break;
     }

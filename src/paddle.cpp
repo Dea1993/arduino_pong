@@ -44,8 +44,12 @@ bool Paddle::check_pad_movement(Ball &ball) {
   // redefine me
   return false;
 }
+
 uint8_t Paddle::get_skills() {
   return 0;
+}
+
+void Paddle::set_skills(uint8_t skills) {
 }
 
 bool HumanPaddle::check_pad_movement() {
@@ -66,6 +70,8 @@ bool BotPaddle::check_pad_movement(Ball &ball) {
   int8_t ball_dir= ball.get_direction_x();
   int8_t ball_dir_ver= ball.get_direction_y();
 
+  uint8_t skills= this -> get_skills();
+
   // ball is moving left and pad is on right, do not move
   if (ball_dir < 0 && _pos_x > MATRIX_WIDTH / 2) return false;
   // ball is moving right and pad is on left, do not move
@@ -74,18 +80,18 @@ bool BotPaddle::check_pad_movement(Ball &ball) {
   uint8_t ball_x= ball.get_x();
   int8_t ball_distance= ball_x - _pos_x;
   if (ball_distance < 0) ball_distance *= -1;
-  switch (this -> get_skills()) {
+  switch (skills) {
     case 1:
-      if (ball_distance > 2) return false;
+      if (ball_distance > 3) return false;
       break;
     case 2:
-      if (ball_distance > 3) return false;
+      if (ball_distance > 4) return false;
       break;
   }
 
-  // TODO BotPaddle movement logics
-  // on higher difficult level i could also check the ball direction
-  // or at lover difficulty level i could also check the distance from the pad and move only when the ball si near
+  uint8_t move_chances= random(skills * 10) % 2;
+  if (!move_chances) return false;
+
   enum Movement {NONE, UP, DOWN};
   Movement _movment= NONE;
   
@@ -112,4 +118,10 @@ bool BotPaddle::check_pad_movement(Ball &ball) {
 
 uint8_t BotPaddle::get_skills() {
   return _skills;
+}
+
+void BotPaddle::set_skills(uint8_t skills) {
+  if (skills < 0) _skills= 0;
+  else if (skills > 1) _skills= 1;
+  else _skills= skills;
 }

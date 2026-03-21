@@ -212,3 +212,27 @@ const byte frame_cvc[MATRIX_HEIGHT][MATRIX_WIDTH] = {
 };
 
 const byte (*frame_gmodes[3])[12]= {frame_pvp, frame_pvc, frame_cvc};
+
+const byte frame_bot_skill_easy[MATRIX_HEIGHT][MATRIX_WIDTH] = {
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0 },
+  { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
+  { 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0 },
+  { 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0 },
+  { 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
+const byte frame_bot_skill_hard[MATRIX_HEIGHT][MATRIX_WIDTH] = {
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0 },
+  { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 },
+  { 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0 },
+  { 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0 },
+  { 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
+
+const byte (*frame_bot_skills[3])[12]= {frame_bot_skill_easy, frame_bot_skill_hard};

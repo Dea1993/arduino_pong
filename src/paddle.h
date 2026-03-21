@@ -27,6 +27,7 @@ class Paddle {
     virtual bool check_pad_movement();
     virtual bool check_pad_movement(Ball &ball);
     virtual uint8_t get_skills();
+    virtual void set_skills(uint8_t skills);
 };
 
 class HumanPaddle : public Paddle {
@@ -46,13 +47,11 @@ class BotPaddle : public Paddle {
     uint8_t _skills; // this is the difficulty level
 
   public:
-    BotPaddle(uint8_t position, uint8_t pos_x, uint8_t skills) 
-              : Paddle(position, false), _pos_x(pos_x), _skills(skills) {
-                if (_skills < 1) _skills= 1;
-                if (_skills > 2) _skills= 2;
-              }
+    BotPaddle(uint8_t position, uint8_t pos_x) 
+              : Paddle(position, false), _pos_x(pos_x) {}
     bool check_pad_movement(Ball &ball);
     uint8_t get_skills();
+    void set_skills(uint8_t skills);
 };
 
 #endif
