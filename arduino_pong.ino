@@ -1,6 +1,7 @@
 #include "Arduino_LED_Matrix.h"
 
 #include "src/config.h"
+#include "src/menu.h"
 #include "src/renderer.h"
 #include "src/engine.h"
 #include "src/paddle.h"
@@ -36,9 +37,6 @@ enum game_statuses : uint8_t {
 };
 game_statuses game_status= MENU;
 
-enum game_modes : uint8_t {PVP, PVC, CVC};
-game_modes game_mode = PVP;
-
 
 Ball ball(4, 6);
 
@@ -48,12 +46,13 @@ HumanPaddle human_pad1(1, P1_BTN_UP, P1_BTN_BOTTOM);
 HumanPaddle human_pad2(4, P2_BTN_UP, P2_BTN_BOTTOM);
 BotPaddle bot_pad1(1, 0);
 BotPaddle bot_pad2(4, MATRIX_WIDTH-1);
+Menu menu;
 
-uint8_t current_gmode_idx= 0;
-bool update_menu= true;
-bool mode_selected= false;
-uint8_t current_bot_menu_idx= 0;
-bool update_menu_bot_skills= true;
+// uint8_t current_gmode_idx= 0;
+// bool update_menu= true;
+// bool mode_selected= false;
+// uint8_t current_bot_menu_idx= 0;
+// bool update_menu_bot_skills= true;
 
 Engine engine(ball, INITIAL_BALL_DELAY);
 Renderer renderer(ball, frame, matrix);
@@ -77,79 +76,80 @@ void loop() {
   switch (game_status) {
 
     case MENU: {
-      if (digitalRead(P2_BTN_BOTTOM) == LOW && current_gmode_idx < sizeof(frame_gmodes)/sizeof(frame_gmodes[0]) -1) {
-        current_gmode_idx += 1;
-        update_menu= true;
+      // switch modes
+      if (digitalRead(P2_BTN_BOTTOM) == LOW) {
+        menu.next_mode();
+        const byte (*current_gmode)[12]= frame_gmodes[menu.get_mode()];
+        matrix.loadPixels((uint8_t*)current_gmode, MATRIX_HEIGHT * MATRIX_WIDTH);
+        delay(300);
       }
-      else if (digitalRead(P2_BTN_UP) == LOW && current_gmode_idx > 0) {
-        update_menu= true;
-        current_gmode_idx -= 1;
-        game_mode= PVP;
+      else if (digitalRead(P2_BTN_UP) == LOW) {
+        menu.prev_mode();
+        const byte (*current_gmode)[12]= frame_gmodes[menu.get_mode()];
+        matrix.loadPixels((uint8_t*)current_gmode, MATRIX_HEIGHT * MATRIX_WIDTH);
+        delay(300);
       }
 
       // 1. P vs P
-      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && game_modes(current_gmode_idx) == PVP) {
+      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && menu.number_of_bots() == 0) {
         p1= &human_pad1;
         p2= &human_pad2;
-        mode_selected= true;
-      }
-      // 2. P vs CPU
-      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && game_modes(current_gmode_idx) == PVC) {
-        p1= &human_pad1;
-        p2= &bot_pad2;
-        mode_selected= true;
-        update_menu= false;
-        game_mode= PVC;
-      }
-      // 3. CPU vs CPU
-      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && game_modes(current_gmode_idx) == CVC) {
-        p1= &bot_pad1;
-        p2= &bot_pad2;
-        mode_selected= true;
-        update_menu= false;
-        game_mode= CVC;
-      }
-
-      if (update_menu) {
-        // show menu on the matrix
-        const byte (*current_gmode)[12]= frame_gmodes[current_gmode_idx];
-        matrix.loadPixels((uint8_t*)current_gmode, MATRIX_HEIGHT * MATRIX_WIDTH);
-        update_menu= false;
-        delay(300);
-      }
-      else if (mode_selected) {
         engine.set_players(p1, p2);
         renderer.set_players(p1, p2);
-        if (game_mode == PVC || game_mode == CVC) {
-          game_status= MENU_BOT_SKILLS;
-          delay(300); // avoid accidental double click for next menu
-        }
-        else game_status= TIMER;
+        game_status= TIMER;
       }
+      // 2. P vs CPU
+      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && menu.number_of_bots() == 1) {
+        p1= &human_pad1;
+        p2= &bot_pad2;
+        engine.set_players(p1, p2);
+        renderer.set_players(p1, p2);
+        game_status= MENU_BOT_SKILLS;
+        delay(300); // avoid accidental double click for next menu
+      }
+      // 3. CPU vs CPU
+      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && menu.number_of_bots() == 2) {
+        p1= &bot_pad1;
+        p2= &bot_pad2;
+        engine.set_players(p1, p2);
+        renderer.set_players(p1, p2);
+        game_status= MENU_BOT_SKILLS;
+        delay(300); // avoid accidental double click for next menu
+      }
+
+      else {
+        const byte (*current_gmode)[12]= frame_gmodes[menu.get_mode()];
+        matrix.loadPixels((uint8_t*)current_gmode, MATRIX_HEIGHT * MATRIX_WIDTH);
+      }
+
       break;
     }
 
     case MENU_BOT_SKILLS: {
-      if (digitalRead(P2_BTN_BOTTOM) == LOW && current_bot_menu_idx < sizeof(frame_bot_skills)/sizeof(frame_bot_skills[0]) -1) {
-        current_bot_menu_idx += 1;
-        update_menu_bot_skills= true;
-      }
-      else if (digitalRead(P2_BTN_UP) == LOW && current_bot_menu_idx > 0) {
-        current_bot_menu_idx -= 1;
-        update_menu_bot_skills= true;
-      }
-      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW) {
-        if (!p1 -> is_human()) p1 -> set_skills(current_bot_menu_idx + 1);
-        if (!p2 -> is_human()) p2 -> set_skills(current_bot_menu_idx + 1);
-        game_status= TIMER;
-        update_menu_bot_skills= false;
-      } else update_menu_bot_skills= false;
-
-      if (update_menu_bot_skills) {
-        const byte (*current_skill_frame)[12]= frame_bot_skills[current_bot_menu_idx];
+      // switch difficulty level
+      if (digitalRead(P2_BTN_BOTTOM) == LOW) {
+        menu.increase_skills();
+        const byte (*current_skill_frame)[12]= frame_bot_skills[menu.get_skill()];
         matrix.loadPixels((uint8_t*)current_skill_frame, MATRIX_HEIGHT * MATRIX_WIDTH);
-        update_menu= false;
         delay(300);
+      }
+      else if (digitalRead(P2_BTN_UP) == LOW) {
+        menu.decrease_skills();
+        const byte (*current_skill_frame)[12]= frame_bot_skills[menu.get_skill()];
+        matrix.loadPixels((uint8_t*)current_skill_frame, MATRIX_HEIGHT * MATRIX_WIDTH);
+        delay(300);
+      }
+
+      // choose difficulty level
+      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW) {
+        if (!p1 -> is_human()) p1 -> set_skills(menu.get_skill() + 1);
+        if (!p2 -> is_human()) p2 -> set_skills(menu.get_skill() + 1);
+        game_status= TIMER;
+      }
+
+      else {
+        const byte (*current_skill_frame)[12]= frame_bot_skills[menu.get_skill()];
+        matrix.loadPixels((uint8_t*)current_skill_frame, MATRIX_HEIGHT * MATRIX_WIDTH);
       }
       break;
     }
@@ -206,8 +206,9 @@ void loop() {
       // restart game once one button is pressed
       if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW || 
           digitalRead(P2_BTN_UP) == LOW || digitalRead(P2_BTN_BOTTOM) == LOW) {
-        game_status= MENU;
         engine.reset();
+        game_status= MENU;
+        delay(300);
       }
       break;
   }

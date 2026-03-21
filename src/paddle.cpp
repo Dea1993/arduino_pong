@@ -121,7 +121,7 @@ uint8_t BotPaddle::get_skills() {
 }
 
 void BotPaddle::set_skills(uint8_t skills) {
-  if (skills < 0) _skills= 0;
-  else if (skills > 1) _skills= 1;
+  if (skills < 1) _skills= 1;
+  else if (skills > 2) _skills= 2;
   else _skills= skills;
 }
