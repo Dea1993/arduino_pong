@@ -35,6 +35,10 @@ enum game_statuses : uint8_t {
 };
 game_statuses game_status= MENU;
 
+enum game_modes : uint8_t {PVP, PVC, CVC};
+game_modes game_mode = PVP;
+
+
 Ball ball(4, 6);
 
 Paddle* p1= nullptr;
@@ -43,6 +47,10 @@ HumanPaddle human_pad1(1, P1_BTN_UP, P1_BTN_BOTTOM);
 HumanPaddle human_pad2(4, P2_BTN_UP, P2_BTN_BOTTOM);
 BotPaddle bot_pad1(1, 0, 2);
 BotPaddle bot_pad2(4, MATRIX_WIDTH-1, 2);
+
+uint8_t current_gmode_idx= 0;
+bool update_menu= 1;
+bool mode_selected= 0;
 
 Engine engine(ball, INITIAL_BALL_DELAY);
 Renderer renderer(ball, frame, matrix);
@@ -65,35 +73,49 @@ void loop() {
 
   switch (game_status) {
 
-    case MENU:
-      // show menu on the matrix
-      // matrix.renderBitmap(pvp_frame, MATRIX_HEIGHT, MATRIX_WIDTH);
+    case MENU: {
+      if (digitalRead(P2_BTN_BOTTOM) == LOW && current_gmode_idx < sizeof(frame_gmodes)/sizeof(frame_gmodes[0]) -1) {
+        current_gmode_idx += 1;
+        update_menu= true;
+      }
+      else if (digitalRead(P2_BTN_UP) == LOW && current_gmode_idx > 0) {
+        update_menu= true;
+        current_gmode_idx -= 1;
+      }
+
       // 1. P vs P
-      if (digitalRead(P1_BTN_UP) == LOW) {
+      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && game_modes(current_gmode_idx) == PVP) {
         p1= &human_pad1;
         p2= &human_pad2;
-        engine.set_players(p1, p2);
-        renderer.set_players(p1, p2);
-        game_status= TIMER;
+        mode_selected= true;
       }
       // 2. P vs CPU
-      else if (digitalRead(P1_BTN_BOTTOM) == LOW) {
+      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && game_modes(current_gmode_idx) == PVC) {
         p1= &human_pad1;
         p2= &bot_pad2;
-        engine.set_players(p1, p2);
-        renderer.set_players(p1, p2);
-        game_status= TIMER;
+        mode_selected= true;
       }
       // 3. CPU vs CPU
-      else if (digitalRead(P2_BTN_UP) == LOW) {
+      else if (digitalRead(P1_BTN_UP) == LOW || digitalRead(P1_BTN_BOTTOM) == LOW && game_modes(current_gmode_idx) == CVC) {
         p1= &bot_pad1;
         p2= &bot_pad2;
+        mode_selected= true;
+      }
+
+      if (update_menu) {
+        // show menu on the matrix
+        const byte (*current_gmode)[12]= frame_gmodes[current_gmode_idx];
+        matrix.loadPixels((uint8_t*)current_gmode, MATRIX_HEIGHT * MATRIX_WIDTH);
+        update_menu= false;
+        delay(300);
+      }
+      else if (mode_selected) {
         engine.set_players(p1, p2);
         renderer.set_players(p1, p2);
         game_status= TIMER;
       }
-      // slideshow menu
       break;
+    }
 
     case TIMER:
       for (int i = START_TIMER; i >= 0; i--) {

@@ -178,7 +178,7 @@ const byte font_pong[10][8][3] = {
   },
 };
 
-const byte pvp_frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
+const byte frame_pvp[MATRIX_HEIGHT][MATRIX_WIDTH] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0 },
   { 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0 },
@@ -189,7 +189,7 @@ const byte pvp_frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-const byte pvc_frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
+const byte frame_pvc[MATRIX_HEIGHT][MATRIX_WIDTH] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0 },
   { 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
@@ -200,7 +200,7 @@ const byte pvc_frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-const byte cvc_frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
+const byte frame_cvc[MATRIX_HEIGHT][MATRIX_WIDTH] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0 },
   { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 },
@@ -211,4 +211,4 @@ const byte cvc_frame[MATRIX_HEIGHT][MATRIX_WIDTH] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
 
-const byte (*game_modes[3])[12]= {pvp_frame, pvc_frame, cvc_frame};
+const byte (*frame_gmodes[3])[12]= {frame_pvp, frame_pvc, frame_cvc};
