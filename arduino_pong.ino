@@ -143,7 +143,7 @@ void loop() {
         if (!p2 -> is_human()) p2 -> set_skills(current_bot_menu_idx + 1);
         game_status= TIMER;
         update_menu_bot_skills= false;
-      }
+      } else update_menu_bot_skills= false;
 
       if (update_menu_bot_skills) {
         const byte (*current_skill_frame)[12]= frame_bot_skills[current_bot_menu_idx];
