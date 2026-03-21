@@ -159,7 +159,7 @@ void loop() {
         renderer.render_timer(i);
         delay(1000);
       }
-      game_status= RUN;
+      game_status= MENU;
       // delay the first ball movement
       exec_t2= millis() + FIRST_START_BALL_DELAY;
       break;
